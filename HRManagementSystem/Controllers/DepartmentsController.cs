@@ -57,7 +57,8 @@ namespace HRManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(department);
+                department.CreatedAt = DateTime.UtcNow;
+                _context.Departments.Add(department);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -79,25 +80,39 @@ namespace HRManagementSystem.Controllers
         // POST: Departments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NameAr,NameEn,DescriptionAr,DescriptionEn,IsActive,CreatedAt")] Department department)
+        public async Task<IActionResult> Edit(
+    int id,
+    [Bind("Id,NameAr,NameEn,DescriptionAr,DescriptionEn,IsActive")]
+    Department department)
         {
-            if (id != department.Id) return NotFound();
-
-            if (ModelState.IsValid)
+            if (id != department.Id)
             {
-                try
-                {
-                    _context.Update(department);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DepartmentExists(department.Id)) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(department);
+
+            if (!ModelState.IsValid)
+            {
+                return View(department);
+            }
+
+            var existingDepartment =
+                await _context.Departments.FindAsync(id);
+
+            if (existingDepartment is null)
+            {
+                return NotFound();
+            }
+
+            existingDepartment.NameAr = department.NameAr;
+            existingDepartment.NameEn = department.NameEn;
+            existingDepartment.DescriptionAr = department.DescriptionAr;
+            existingDepartment.DescriptionEn = department.DescriptionEn;
+            existingDepartment.IsActive = department.IsActive;
+            existingDepartment.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // Show delete confirmation page

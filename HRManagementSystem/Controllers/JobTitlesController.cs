@@ -50,7 +50,9 @@ namespace HRManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(jobTitle);
+                jobTitle.CreatedAt = DateTime.UtcNow;
+
+                _context.JobTitles.Add(jobTitle);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -70,25 +72,35 @@ namespace HRManagementSystem.Controllers
         // POST: JobTitles/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NameAr,NameEn,DescriptionAr,DescriptionEn,IsActive,CreatedAt")] JobTitle jobTitle)
+        public async Task<IActionResult> Edit(int id,[Bind("Id,NameAr,NameEn,DescriptionAr,DescriptionEn,IsActive")]JobTitle jobTitle)
         {
-            if (id != jobTitle.Id) return NotFound();
-
-            if (ModelState.IsValid)
+            if (id != jobTitle.Id)
             {
-                try
-                {
-                    _context.Update(jobTitle);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!JobTitleExists(jobTitle.Id)) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(jobTitle);
+
+            if (!ModelState.IsValid)
+            {
+                return View(jobTitle);
+            }
+
+            var existingJobTitle = await _context.JobTitles.FindAsync(id);
+
+            if (existingJobTitle is null)
+            {
+                return NotFound();
+            }
+
+            existingJobTitle.NameAr = jobTitle.NameAr;
+            existingJobTitle.NameEn = jobTitle.NameEn;
+            existingJobTitle.DescriptionAr = jobTitle.DescriptionAr;
+            existingJobTitle.DescriptionEn = jobTitle.DescriptionEn;
+            existingJobTitle.IsActive = jobTitle.IsActive;
+            existingJobTitle.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: JobTitles/Delete/5
