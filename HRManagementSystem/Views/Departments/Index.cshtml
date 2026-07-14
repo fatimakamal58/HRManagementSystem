@@ -1,0 +1,83 @@
+@model IEnumerable<HRManagementSystem.Models.HR.Department>
+
+@using System.Globalization
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["PageTitle"];
+
+    // bool isArabic =
+    //     CultureInfo.CurrentUICulture.Name.StartsWith("ar");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>@Localizer["PageTitle"]</h1>
+
+    <a asp-action="Create" class="btn btn-primary">
+        @Localizer["CreateNew"]
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>@Localizer["NameAr"]</th>
+                <th>@Localizer["NameEn"]</th>
+                <th>@Localizer["DescriptionAr"]</th>
+                <th>@Localizer["DescriptionEn"]</th>
+                <th>@Localizer["IsActive"]</th>
+                <th>@Localizer["Actions"]</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.NameAr</td>
+                    <td dir="ltr">@item.NameEn</td>
+                    <td>@item.DescriptionAr</td>
+                    <td dir="ltr">@item.DescriptionEn</td>
+
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <span class="badge bg-success">
+                                @Localizer["Active"]
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">
+                                @Localizer["Inactive"]
+                            </span>
+                        }
+                    </td>
+
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit"
+                               asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                @Localizer["Edit"]
+                            </a>
+
+                            <a asp-action="Details"
+                               asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-info">
+                                @Localizer["Details"]
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-danger">
+                                @Localizer["Delete"]
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
