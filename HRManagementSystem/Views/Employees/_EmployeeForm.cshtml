@@ -1,0 +1,180 @@
+﻿@model HRManagementSystem.ViewModels.Employees.EmployeeFormViewModel
+
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="EmployeeNumber"
+                   class="form-label">رقم الموظف</label>
+            <input asp-for="EmployeeNumber"
+                   class="form-control" />
+            <span asp-validation-for="EmployeeNumber"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="NationalId"
+                   class="form-label">رقم الهوية أو الإقامة</label>
+            <input asp-for="NationalId"
+                   class="form-control" />
+            <span asp-validation-for="NationalId"
+                  class="text-danger"></span>
+        </div>
+    </div>
+
+    <h5 class="mt-3">الاسم بالعربية</h5>
+
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label asp-for="FirstNameAr" class="form-label">الاسم الأول</label>
+            <input asp-for="FirstNameAr" class="form-control" />
+            <span asp-validation-for="FirstNameAr" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label asp-for="SecondNameAr" class="form-label">الاسم الثاني</label>
+            <input asp-for="SecondNameAr" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label asp-for="ThirdNameAr" class="form-label">الاسم الثالث</label>
+            <input asp-for="ThirdNameAr" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label asp-for="LastNameAr" class="form-label">اسم العائلة</label>
+            <input asp-for="LastNameAr" class="form-control" />
+            <span asp-validation-for="LastNameAr" class="text-danger"></span>
+        </div>
+    </div>
+
+    <h5 class="mt-3">الاسم بالإنجليزية</h5>
+
+    <div class="row" dir="ltr">
+        <div class="col-md-3 mb-3">
+            <label asp-for="FirstNameEn" class="form-label">First Name</label>
+            <input asp-for="FirstNameEn" class="form-control" />
+            <span asp-validation-for="FirstNameEn" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label asp-for="SecondNameEn" class="form-label">Second Name</label>
+            <input asp-for="SecondNameEn" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label asp-for="ThirdNameEn" class="form-label">Third Name</label>
+            <input asp-for="ThirdNameEn" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label asp-for="LastNameEn" class="form-label">Last Name</label>
+            <input asp-for="LastNameEn" class="form-control" />
+            <span asp-validation-for="LastNameEn" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Gender" class="form-label">الجنس</label>
+            <select asp-for="Gender"
+                    asp-items="Html.GetEnumSelectList<HRManagementSystem.Models.Enums.Gender>()"
+                    class="form-select">
+                <option value="">اختر الجنس</option>
+            </select>
+            <span asp-validation-for="Gender" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label asp-for="BirthDate" class="form-label">تاريخ الميلاد</label>
+            <input asp-for="BirthDate" class="form-control" />
+            <span asp-validation-for="BirthDate" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label asp-for="HireDate" class="form-label">تاريخ التوظيف</label>
+            <input asp-for="HireDate" class="form-control" />
+            <span asp-validation-for="HireDate" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="DepartmentId" class="form-label">القسم</label>
+            <select asp-for="DepartmentId"
+                    asp-items="Model.Departments"
+                    class="form-select">
+                <option value="">اختر القسم</option>
+            </select>
+            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="JobTitleId" class="form-label">المسمى الوظيفي</label>
+            <select asp-for="JobTitleId"
+                    asp-items="Model.JobTitles"
+                    class="form-select">
+                <option value="">اختر المسمى الوظيفي</option>
+            </select>
+            <span asp-validation-for="JobTitleId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="PhoneNumber" class="form-label">رقم الهاتف</label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="EmploymentStatus"
+                   class="form-label">حالة الموظف</label>
+
+            <select asp-for="EmploymentStatus"
+                    asp-items="Html.GetEnumSelectList<HRManagementSystem.Models.Enums.EmploymentStatus>()"
+                    class="form-select">
+                <option value="">اختر الحالة</option>
+            </select>
+
+            <span asp-validation-for="EmploymentStatus"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3 d-flex align-items-end">
+            <div class="form-check mb-2">
+                <input asp-for="IsActive"
+                       class="form-check-input" />
+                <label asp-for="IsActive"
+                       class="form-check-label">
+                    مفعّل
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        حفظ
+    </button>
+
+    <a asp-controller="Home"
+       asp-action="Index"
+       class="btn btn-secondary">
+        إلغاء
+    </a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

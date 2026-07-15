@@ -1,0 +1,81 @@
+﻿@model IEnumerable<HRManagementSystem.Models.HR.Employee>
+
+@{
+    ViewData["Title"] = "الموظفون";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>الموظفون</h1>
+
+    <a asp-action="Create" class="btn btn-primary">
+        إضافة موظف
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>رقم الموظف</th>
+                <th>الاسم</th>
+                <th>رقم الهوية</th>
+                <th>القسم</th>
+                <th>المسمى الوظيفي</th>
+                <th>رقم الهاتف</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var employee in Model)
+            {
+                <tr>
+                    <td>@employee.EmployeeNumber</td>
+                    <td>@employee.FullNameAr</td>
+                    <td>@employee.NationalId</td>
+                    <td>@employee.Department.NameAr</td>
+                    <td>@employee.JobTitle.NameAr</td>
+                    <td>@employee.PhoneNumber</td>
+
+                    <td>
+                        @if (employee.IsActive)
+                        {
+                            <span class="badge bg-success">
+                                مفعّل
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">
+                                غير مفعّل
+                            </span>
+                        }
+                    </td>
+
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit"
+                               asp-route-id="@employee.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                تعديل
+                            </a>
+
+                            <a asp-action="Details"
+                               asp-route-id="@employee.Id"
+                               class="btn btn-sm btn-outline-info">
+                                التفاصيل
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@employee.Id"
+                               class="btn btn-sm btn-outline-danger">
+                                حذف
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

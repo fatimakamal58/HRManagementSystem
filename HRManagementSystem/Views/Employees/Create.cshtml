@@ -1,0 +1,13 @@
+﻿@model HRManagementSystem.ViewModels.Employees.EmployeeFormViewModel
+
+<h1>إضافة موظف</h1>
+
+<form asp-action="Create" method="post">
+
+    <partial name="_EmployeeForm" />
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
