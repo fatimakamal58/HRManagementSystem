@@ -1,10 +1,12 @@
 using HRManagementSystem.Infrastructure;
 using HRManagementSystem.Infrastructure.Data;
+using HRManagementSystem.Web.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // تسجيل خدمات Infrastructure، ومنها ApplicationDbContext
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -46,6 +48,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

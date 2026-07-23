@@ -7,15 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HRManagementSystem.Domain\HRManagementSystem.Domain.csproj" />
+    <Compile Remove="Common\**" />
+    <Compile Remove="Features\**" />
+    <Compile Remove="Mappings\**" />
+    <EmbeddedResource Remove="Common\**" />
+    <EmbeddedResource Remove="Features\**" />
+    <EmbeddedResource Remove="Mappings\**" />
+    <None Remove="Common\**" />
+    <None Remove="Features\**" />
+    <None Remove="Mappings\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Employees\" />
-    <Folder Include="Features\Departments\" />
-    <Folder Include="Features\JobTitles\" />
-    <Folder Include="Mappings\" />
-    <Folder Include="Common\" />
+    <ProjectReference Include="..\HRManagementSystem.Domain\HRManagementSystem.Domain.csproj" />
   </ItemGroup>
 
 </Project>
