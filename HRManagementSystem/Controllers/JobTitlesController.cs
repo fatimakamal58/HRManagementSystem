@@ -1,9 +1,8 @@
-using HRManagementSystem.Data;
-using HRManagementSystem.Models.HR;
+using HRManagementSystem.Infrastructure.Data;
+using HRManagementSystem.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace HRManagementSystem.Controllers
 {

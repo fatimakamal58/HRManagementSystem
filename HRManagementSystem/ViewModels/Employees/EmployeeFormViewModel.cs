@@ -1,4 +1,4 @@
-﻿using HRManagementSystem.Models.Enums;
+using HRManagementSystem.Domain.Enums;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 

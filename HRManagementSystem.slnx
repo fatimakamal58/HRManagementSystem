@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="HRManagementSystem/HRManagementSystem.csproj" />
+  <Project Path="HRManagementSystem.Application/HRManagementSystem.Application.csproj" Id="6a1f5259-a699-43ae-bb22-e1f6b96af16f" />
+  <Project Path="HRManagementSystem.Domain/HRManagementSystem.Domain.csproj" Id="4fe4abb9-22f9-42d6-9a5e-ccf08a640105" />
+  <Project Path="HRManagementSystem.Infrastructure/HRManagementSystem.Infrastructure.csproj" Id="c2f26490-d7a4-47c5-905e-213226d353fe" />
+  <Project Path="HRManagementSystem/HRManagementSystem.Web.csproj" />
 </Solution>

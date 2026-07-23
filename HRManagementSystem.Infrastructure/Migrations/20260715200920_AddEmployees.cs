@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace HRManagementSystem.Data.Migrations
+namespace HRManagementSystem.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
     public partial class AddEmployees : Migration

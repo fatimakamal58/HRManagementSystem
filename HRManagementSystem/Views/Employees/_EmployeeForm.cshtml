@@ -1,4 +1,4 @@
-﻿@model HRManagementSystem.ViewModels.Employees.EmployeeFormViewModel
+@model HRManagementSystem.ViewModels.Employees.EmployeeFormViewModel
 
 
 <form asp-action="Create" method="post">
@@ -81,7 +81,7 @@
         <div class="col-md-4 mb-3">
             <label asp-for="Gender" class="form-label">الجنس</label>
             <select asp-for="Gender"
-                    asp-items="Html.GetEnumSelectList<HRManagementSystem.Models.Enums.Gender>()"
+                    asp-items="Html.GetEnumSelectList<HRManagementSystem.Domain.Enums.Gender>()"
                     class="form-select">
                 <option value="">اختر الجنس</option>
             </select>
@@ -143,7 +143,7 @@
                    class="form-label">حالة الموظف</label>
 
             <select asp-for="EmploymentStatus"
-                    asp-items="Html.GetEnumSelectList<HRManagementSystem.Models.Enums.EmploymentStatus>()"
+                    asp-items="Html.GetEnumSelectList<HRManagementSystem.Domain.Enums.EmploymentStatus>()"
                     class="form-select">
                 <option value="">اختر الحالة</option>
             </select>

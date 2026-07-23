@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
-namespace HRManagementSystem.Data.Migrations
+namespace HRManagementSystem.Infrastructure.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {

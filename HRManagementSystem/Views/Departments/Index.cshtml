@@ -1,4 +1,4 @@
-@model IEnumerable<HRManagementSystem.Models.HR.Department>
+@model IEnumerable<DepartmentDto>
 
 @using System.Globalization
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
@@ -24,8 +24,6 @@
             <tr>
                 <th>@Localizer["NameAr"]</th>
                 <th>@Localizer["NameEn"]</th>
-                <th>@Localizer["DescriptionAr"]</th>
-                <th>@Localizer["DescriptionEn"]</th>
                 <th>@Localizer["IsActive"]</th>
                 <th>@Localizer["Actions"]</th>
             </tr>
@@ -37,8 +35,7 @@
                 <tr>
                     <td>@item.NameAr</td>
                     <td dir="ltr">@item.NameEn</td>
-                    <td>@item.DescriptionAr</td>
-                    <td dir="ltr">@item.DescriptionEn</td>
+                    
 
                     <td>
                         @if (item.IsActive)

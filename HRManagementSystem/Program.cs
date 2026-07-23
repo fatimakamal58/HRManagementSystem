@@ -1,27 +1,35 @@
-using HRManagementSystem.Data;
+using HRManagementSystem.Infrastructure;
+using HRManagementSystem.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+// تسجيل خدمات Infrastructure، ومنها ApplicationDbContext
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// تسجيل Identity 
+builder.Services
+    .AddDefaultIdentity<IdentityUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+// إعداد الترجمة
 builder.Services.AddLocalization(options =>
 {
     options.ResourcesPath = "Resources";
 });
 
-builder.Services.AddControllersWithViews()
+builder.Services
+    .AddControllersWithViews()
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
+
 var supportedCultures = new[]
 {
     new CultureInfo("ar-SA"),
@@ -30,13 +38,12 @@ var supportedCultures = new[]
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    options.DefaultRequestCulture = new RequestCulture("ar-SA");
+    options.DefaultRequestCulture =
+        new RequestCulture("ar-SA");
 
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 });
-
-
 
 var app = builder.Build();
 
