@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HRManagementSystem.Domain\HRManagementSystem.Domain.csproj" />
+    <ProjectReference Include="..\HRManagementSystem.Infrastructure\HRManagementSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

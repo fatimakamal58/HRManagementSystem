@@ -1,3 +1,4 @@
+using HRManagementSystem.Application;
 using HRManagementSystem.Infrastructure;
 using HRManagementSystem.Infrastructure.Data;
 using HRManagementSystem.Web.Middleware;
@@ -10,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // تسجيل خدمات Infrastructure، ومنها ApplicationDbContext
 builder.Services.AddInfrastructure(builder.Configuration);
-
+builder.Services.AddApplication(builder.Configuration);
 // تسجيل Identity 
 builder.Services
     .AddDefaultIdentity<IdentityUser>(options =>

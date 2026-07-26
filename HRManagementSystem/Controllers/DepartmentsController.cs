@@ -1,6 +1,6 @@
 using HRManagementSystem.Application.DTOs.Departments;
 using HRManagementSystem.Application.Interfaces;
-using HRManagementSystem.Infrastructure.Services;
+using HRManagementSystem.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

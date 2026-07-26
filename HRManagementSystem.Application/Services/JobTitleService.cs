@@ -5,7 +5,7 @@ using HRManagementSystem.Domain.Entities.HR;
 using HRManagementSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace HRManagementSystem.Infrastructure.Services;
+namespace HRManagementSystem.Application.Services;
 
 public class JobTitleService : IJobTitleService
 {

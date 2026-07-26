@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using HRManagementSystem.Application.Interfaces;
-using HRManagementSystem.Infrastructure.Services;
 
 namespace HRManagementSystem.Infrastructure;
 
@@ -20,10 +18,7 @@ public static class DependencyInjection
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
-        services.AddScoped<IDepartmentService, DepartmentService>();
-        services.AddScoped<IJobTitleService, JobTitleService>();
-        services.AddScoped<IEmployeeService, EmployeeService>();
-        services.AddScoped<IEmployeeSalaryService, EmployeeSalaryService>();
+        
 
         return services;
     }

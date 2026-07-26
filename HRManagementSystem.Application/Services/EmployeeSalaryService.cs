@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HRManagementSystem.Infrastructure.Services
+namespace HRManagementSystem.Application.Services
 {
     public class EmployeeSalaryService : IEmployeeSalaryService
     {

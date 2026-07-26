@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HRManagementSystem.Application\HRManagementSystem.Application.csproj" />
     <ProjectReference Include="..\HRManagementSystem.Domain\HRManagementSystem.Domain.csproj" />
   </ItemGroup>
 

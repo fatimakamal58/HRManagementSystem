@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Application.Exceptions;
 using HRManagementSystem.Domain.Entities.HR;
 
-namespace HRManagementSystem.Infrastructure.Services;
+namespace HRManagementSystem.Application.Services;
 
 public class DepartmentService : IDepartmentService
 {
