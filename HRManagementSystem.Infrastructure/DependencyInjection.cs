@@ -21,6 +21,7 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
         services.AddScoped<IDepartmentService, DepartmentService>();
+        services.AddScoped<IJobTitleService, JobTitleService>();
 
         return services;
     }

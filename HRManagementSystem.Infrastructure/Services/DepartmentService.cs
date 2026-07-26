@@ -120,12 +120,14 @@ public class DepartmentService : IDepartmentService
     }
     public async Task DeleteAsync(int id)
     {
-        var department = await _context.Departments.FindAsync(id);
+        var department = await _context.Departments
+            .FirstOrDefaultAsync(department => department.Id == id);
 
         if (department == null)
             throw new NotFoundException(nameof(Department));
 
-        _context.Departments.Remove(department);
+        department.IsActive = false;
+        department.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
     }

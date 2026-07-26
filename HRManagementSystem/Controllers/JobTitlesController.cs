@@ -1,5 +1,7 @@
-using HRManagementSystem.Infrastructure.Data;
+using HRManagementSystem.Application.DTOs.JobTitles;
+using HRManagementSystem.Application.Interfaces;
 using HRManagementSystem.Domain.Entities;
+using HRManagementSystem.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,32 +11,28 @@ namespace HRManagementSystem.Controllers
     [Authorize]
     public class JobTitlesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IJobTitleService _jobTitleService;
 
-        public JobTitlesController(ApplicationDbContext context)
+        public JobTitlesController(IJobTitleService jobTitleService)
         {
-            _context = context;
+            _jobTitleService = jobTitleService;
         }
 
         // GET: JobTitles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.JobTitles.AsNoTracking().ToListAsync());
+            var jobTitles = await _jobTitleService.GetAllAsync();
+
+            return View(jobTitles);
         }
 
         // GET: JobTitles/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null) return NotFound();
-
-            var jobTitle = await _context.JobTitles
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id.Value);
-
-            if (jobTitle == null) return NotFound();
+            var jobTitle = await _jobTitleService.GetByIdAsync(id);
 
             return View(jobTitle);
-        }
+        } 
 
         // GET: JobTitles/Create
         public IActionResult Create()
@@ -45,72 +43,51 @@ namespace HRManagementSystem.Controllers
         // POST: JobTitles/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NameAr,NameEn,DescriptionAr,DescriptionEn,IsActive")] JobTitle jobTitle)
+        public async Task<IActionResult> Create(CreateJobTitleDto dto)
         {
-            if (ModelState.IsValid)
-            {
-                jobTitle.CreatedAt = DateTime.UtcNow;
+            if (!ModelState.IsValid)
+                return View(dto);
 
-                _context.JobTitles.Add(jobTitle);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(jobTitle);
+            await _jobTitleService.CreateAsync(dto);
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: JobTitles/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null) return NotFound();
+            var jobTitle = await _jobTitleService.GetByIdAsync(id);
 
-            var jobTitle = await _context.JobTitles.FindAsync(id.Value);
-            if (jobTitle == null) return NotFound();
-            return View(jobTitle);
+            var model = new UpdateJobTitleDto
+            {
+                Id = jobTitle.Id,
+                NameAr = jobTitle.NameAr,
+                NameEn = jobTitle.NameEn,
+                DescriptionAr = jobTitle.DescriptionAr,
+                DescriptionEn = jobTitle.DescriptionEn,
+                IsActive = jobTitle.IsActive
+            };
+
+            return View(model);
         }
 
         // POST: JobTitles/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,[Bind("Id,NameAr,NameEn,DescriptionAr,DescriptionEn,IsActive")]JobTitle jobTitle)
+        public async Task<IActionResult> Edit(UpdateJobTitleDto dto)
         {
-            if (id != jobTitle.Id)
-            {
-                return NotFound();
-            }
-
             if (!ModelState.IsValid)
-            {
-                return View(jobTitle);
-            }
+                return View(dto);
 
-            var existingJobTitle = await _context.JobTitles.FindAsync(id);
-
-            if (existingJobTitle is null)
-            {
-                return NotFound();
-            }
-
-            existingJobTitle.NameAr = jobTitle.NameAr;
-            existingJobTitle.NameEn = jobTitle.NameEn;
-            existingJobTitle.DescriptionAr = jobTitle.DescriptionAr;
-            existingJobTitle.DescriptionEn = jobTitle.DescriptionEn;
-            existingJobTitle.IsActive = jobTitle.IsActive;
-            existingJobTitle.UpdatedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
+            await _jobTitleService.UpdateAsync(dto);
 
             return RedirectToAction(nameof(Index));
         }
 
         // GET: JobTitles/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null) return NotFound();
-
-            var jobTitle = await _context.JobTitles
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id.Value);
-            if (jobTitle == null) return NotFound();
+            var jobTitle = await _jobTitleService.GetByIdAsync(id);
 
             return View(jobTitle);
         }
@@ -120,18 +97,11 @@ namespace HRManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var jobTitle = await _context.JobTitles.FindAsync(id);
-            if (jobTitle != null)
-            {
-                _context.JobTitles.Remove(jobTitle);
-                await _context.SaveChangesAsync();
-            }
+            await _jobTitleService.DeleteAsync(id);
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool JobTitleExists(int id)
-        {
-            return _context.JobTitles.Any(e => e.Id == id);
-        }
+
     }
 }

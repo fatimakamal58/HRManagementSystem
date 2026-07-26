@@ -1,4 +1,4 @@
-@model HRManagementSystem.Domain.Entities.JobTitle
+@model UpdateJobTitleDto
 
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
@@ -10,7 +10,6 @@
 
 <form asp-action="Edit" method="post">
 	<input type="hidden" asp-for="Id" />
-	<input type="hidden" asp-for="CreatedAt" />
 
 	<div class="form-group">
 		<label asp-for="NameAr" class="control-label">@Localizer["NameAr"]</label>

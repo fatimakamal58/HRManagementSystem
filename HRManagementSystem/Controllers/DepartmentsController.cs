@@ -1,5 +1,6 @@
 using HRManagementSystem.Application.DTOs.Departments;
 using HRManagementSystem.Application.Interfaces;
+using HRManagementSystem.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,12 @@ namespace HRManagementSystem.Controllers
             return View(await _departmentService.GetAllAsync());
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var department = await _departmentService.GetByIdAsync(id);
+
+            return View(department);
+        }
         [HttpGet]
         public IActionResult Create()
         {
