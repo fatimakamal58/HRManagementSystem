@@ -22,6 +22,8 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString));
         services.AddScoped<IDepartmentService, DepartmentService>();
         services.AddScoped<IJobTitleService, JobTitleService>();
+        services.AddScoped<IEmployeeService, EmployeeService>();
+        services.AddScoped<IEmployeeSalaryService, EmployeeSalaryService>();
 
         return services;
     }

@@ -1,4 +1,4 @@
-﻿using HRManagementSystem.Domain.Entities;
+﻿using HRManagementSystem.Domain.Entities.HR;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,4 +17,5 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<JobTitle> JobTitles { get; set; }
 
     public DbSet<Employee> Employees { get; set; }
+    public DbSet<EmployeeSalary> EmployeeSalaries { get; set; }
 }

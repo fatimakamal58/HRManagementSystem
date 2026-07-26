@@ -1,7 +1,7 @@
 ﻿using HRManagementSystem.Application.DTOs.JobTitles;
 using HRManagementSystem.Application.Exceptions;
 using HRManagementSystem.Application.Interfaces;
-using HRManagementSystem.Domain.Entities;
+using HRManagementSystem.Domain.Entities.HR;
 using HRManagementSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

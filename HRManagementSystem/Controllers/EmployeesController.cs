@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using HRManagementSystem.Infrastructure.Data;
-using HRManagementSystem.Domain.Entities;
 using HRManagementSystem.ViewModels.Employees;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using HRManagementSystem.Domain.Entities.HR;
 
 namespace HRManagementSystem.Controllers
 {

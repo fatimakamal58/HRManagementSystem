@@ -49,7 +49,7 @@ namespace HRManagementSystem.ViewModels.Employees
 
         [Required(ErrorMessage = "تاريخ الميلاد مطلوب.")]
         [DataType(DataType.Date)]
-        public DateTime? BirthDate { get; set; }
+        public DateOnly? BirthDate { get; set; }
 
         [Required(ErrorMessage = "رقم الهاتف مطلوب.")]
         [Phone(ErrorMessage = "رقم الهاتف غير صحيح.")]
@@ -67,7 +67,7 @@ namespace HRManagementSystem.ViewModels.Employees
 
         [Required(ErrorMessage = "تاريخ التوظيف مطلوب.")]
         [DataType(DataType.Date)]
-        public DateTime? HireDate { get; set; }
+        public DateOnly? HireDate { get; set; }
 
         [Required(ErrorMessage = "حالة الموظف مطلوبة.")]
         public EmploymentStatus? EmploymentStatus { get; set; }

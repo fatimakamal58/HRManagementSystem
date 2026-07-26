@@ -1,4 +1,4 @@
-@model IEnumerable<HRManagementSystem.Domain.Entities.Employee>
+@model IEnumerable<EmployeeDto>
 
 @{
     ViewData["Title"] = "الموظفون";
@@ -34,24 +34,12 @@
                     <td>@employee.EmployeeNumber</td>
                     <td>@employee.FullNameAr</td>
                     <td>@employee.NationalId</td>
-                    <td>@employee.Department.NameAr</td>
-                    <td>@employee.JobTitle.NameAr</td>
+                    <td>@employee.DepartmentName</td>
+                    <td>@employee.JobTitleName</td>
                     <td>@employee.PhoneNumber</td>
+                    <td></td>
 
-                    <td>
-                        @if (employee.IsActive)
-                        {
-                            <span class="badge bg-success">
-                                مفعّل
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">
-                                غير مفعّل
-                            </span>
-                        }
-                    </td>
+                    
 
                     <td>
                         <div class="d-flex gap-2">

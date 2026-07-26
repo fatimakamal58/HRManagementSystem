@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using HRManagementSystem.Domain.Common;
 using HRManagementSystem.Domain.Enums;
 
-namespace HRManagementSystem.Domain.Entities;
+namespace HRManagementSystem.Domain.Entities.HR;
 
 public class Employee : BaseEntity
 {
@@ -45,7 +45,7 @@ public class Employee : BaseEntity
 
     public Gender Gender { get; set; }
 
-    public DateTime BirthDate { get; set; }
+    public DateOnly BirthDate { get; set; }
 
     [Required]
     [StringLength(20)]
@@ -64,10 +64,12 @@ public class Employee : BaseEntity
 
     public JobTitle JobTitle { get; set; } = null!;
 
-    public DateTime HireDate { get; set; }
+    public DateOnly HireDate { get; set; }
 
     public EmploymentStatus EmploymentStatus { get; set; }
         = EmploymentStatus.Active;
+    public ICollection<EmployeeSalary> Salaries { get; set; }
+    = new List<EmployeeSalary>();
 
     [NotMapped]
     public string FullNameAr =>

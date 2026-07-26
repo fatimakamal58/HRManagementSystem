@@ -1,9 +1,9 @@
 ﻿using HRManagementSystem.Application.DTOs.Departments;
 using HRManagementSystem.Application.Interfaces;
-using HRManagementSystem.Domain.Entities;
 using HRManagementSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Application.Exceptions;
+using HRManagementSystem.Domain.Entities.HR;
 
 namespace HRManagementSystem.Infrastructure.Services;
 

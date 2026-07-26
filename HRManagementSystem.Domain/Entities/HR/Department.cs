@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HRManagementSystem.Domain.Entities
+namespace HRManagementSystem.Domain.Entities.HR
 {
-    public class JobTitle : BaseEntity
+    public class Department : BaseEntity
     {
         public string NameAr { get; set; } = string.Empty;
 
