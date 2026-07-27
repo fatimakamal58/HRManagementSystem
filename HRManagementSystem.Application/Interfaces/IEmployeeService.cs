@@ -13,8 +13,11 @@ namespace HRManagementSystem.Application.Interfaces
 
         Task CreateAsync(CreateEmployeeDto dto);
 
+        Task<UpdateEmployeeDto> GetForUpdateAsync(int id);
         Task UpdateAsync(UpdateEmployeeDto dto);
 
         Task DeleteAsync(int id);
+        Task<List<EmployeeDto>> GetDeletedAsync();
+        Task RestoreAsync(int id);
     }
 }
