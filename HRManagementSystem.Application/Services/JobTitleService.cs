@@ -1,4 +1,5 @@
 ﻿using HRManagementSystem.Application.DTOs.JobTitles;
+using HRManagementSystem.Application.DTOs.Shared;
 using HRManagementSystem.Application.Exceptions;
 using HRManagementSystem.Application.Interfaces;
 using HRManagementSystem.Domain.Entities.HR;
@@ -137,5 +138,19 @@ public class JobTitleService : IJobTitleService
         jobTitle.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<LookupDto>> GetLookupAsync()
+    {
+        return await _context.JobTitles
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.NameAr)
+            .Select(x => new LookupDto
+            {
+                Id = x.Id,
+                Name = x.NameAr
+            })
+            .ToListAsync();
     }
 }

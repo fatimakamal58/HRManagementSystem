@@ -45,7 +45,7 @@ public class Employee : BaseEntity
 
     public Gender Gender { get; set; }
 
-    public DateOnly BirthDate { get; set; }
+    public DateTime BirthDate { get; set; }
 
     [Required]
     [StringLength(20)]
@@ -64,7 +64,7 @@ public class Employee : BaseEntity
 
     public JobTitle JobTitle { get; set; } = null!;
 
-    public DateOnly HireDate { get; set; }
+    public DateTime HireDate { get; set; }
 
     public EmploymentStatus EmploymentStatus { get; set; }
         = EmploymentStatus.Active;

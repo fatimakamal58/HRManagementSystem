@@ -1,4 +1,4 @@
-﻿namespace HRManagementSystem.Application.DTOs.Employees
+﻿namespace HRManagementSystem.Application.DTOs.Shared
 {
     public class LookupDto
     {

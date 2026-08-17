@@ -23,9 +23,9 @@ namespace HRManagementSystem.Application.DTOs.Employees
 
         public Gender Gender { get; set; }
 
-        public DateOnly BirthDate { get; set; }
+        public DateTime BirthDate { get; set; }
 
-        public DateOnly HireDate { get; set; }
+        public DateTime HireDate { get; set; }
 
         public EmploymentStatus EmploymentStatus { get; set; }
 

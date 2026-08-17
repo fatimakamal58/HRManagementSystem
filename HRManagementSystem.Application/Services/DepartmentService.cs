@@ -1,9 +1,10 @@
 ﻿using HRManagementSystem.Application.DTOs.Departments;
+using HRManagementSystem.Application.DTOs.Shared;
+using HRManagementSystem.Application.Exceptions;
 using HRManagementSystem.Application.Interfaces;
+using HRManagementSystem.Domain.Entities.HR;
 using HRManagementSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using HRManagementSystem.Application.Exceptions;
-using HRManagementSystem.Domain.Entities.HR;
 
 namespace HRManagementSystem.Application.Services;
 
@@ -130,5 +131,19 @@ public class DepartmentService : IDepartmentService
         department.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<LookupDto>> GetLookupAsync()
+    {
+        return await _context.Departments
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.NameAr)
+            .Select(x => new LookupDto
+            {
+                Id = x.Id,
+                Name = x.NameAr
+            })
+            .ToListAsync();
     }
 }

@@ -37,7 +37,8 @@
                     <td>@employee.DepartmentName</td>
                     <td>@employee.JobTitleName</td>
                     <td>@employee.PhoneNumber</td>
-                    <td></td>
+                    <td>@employee.EmploymentStatus</td>
+
 
                     
 
@@ -55,15 +56,99 @@
                                 التفاصيل
                             </a>
 
-                            <a asp-action="Delete"
-                               asp-route-id="@employee.Id"
-                               class="btn btn-sm btn-outline-danger">
+                            <button type="button"
+                                    class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteEmployeeModal"
+                                    data-id="@employee.Id"
+                                    data-name="@employee.FullNameAr">
                                 حذف
-                            </a>
+                            </button>
                         </div>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <div class="modal fade"
+         id="deleteEmployeeModal"
+         tabindex="-1"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">تأكيد الحذف</h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    هل أنت متأكد من حذف الموظف
+                    <strong id="employeeName"></strong>؟
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        إلغاء
+                    </button>
+
+                    <form asp-action="Delete"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               id="deleteEmployeeId"
+                               name="id" />
+
+                        <button type="submit"
+                                class="btn btn-danger">
+                            حذف
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 </div>
+
+@section Scripts {
+    <script>
+        const deleteModal =
+            document.getElementById('deleteEmployeeModal');
+
+        deleteModal.addEventListener(
+            'show.bs.modal',
+            function (event) {
+
+                const button = event.relatedTarget;
+
+                const employeeId =
+                    button.getAttribute('data-id');
+
+                const employeeName =
+                    button.getAttribute('data-name');
+
+                document.getElementById(
+                    'deleteEmployeeId'
+                ).value = employeeId;
+
+                document.getElementById(
+                    'employeeName'
+                ).textContent = employeeName;
+            });
+    </script>
+}

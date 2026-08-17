@@ -1,0 +1,54 @@
+﻿@model EmployeeDto
+
+<h1>تفاصيل الموظف</h1>
+
+<dl class="row">
+
+    <dt class="col-sm-3">رقم الموظف</dt>
+    <dd class="col-sm-9">@Model.EmployeeNumber</dd>
+
+    <dt class="col-sm-3">الاسم العربي</dt>
+    <dd class="col-sm-9">@Model.FullNameAr</dd>
+
+    <dt class="col-sm-3">الاسم الإنجليزي</dt>
+    <dd class="col-sm-9">@Model.FullNameEn</dd>
+
+    <dt class="col-sm-3">الجنس</dt>
+    <dd class="col-sm-9">@Model.Gender</dd>
+
+    <dt class="col-sm-3">تاريخ الميلاد</dt>
+    <dd class="col-sm-9">@Model.BirthDate.ToString("yyyy-MM-dd")</dd>
+
+    <dt class="col-sm-3">رقم الهوية</dt>
+    <dd class="col-sm-9">@Model.NationalId</dd>
+
+    <dt class="col-sm-3">البريد الإلكتروني</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+
+    <dt class="col-sm-3">رقم الجوال</dt>
+    <dd class="col-sm-9">@Model.PhoneNumber</dd>
+
+    <dt class="col-sm-3">القسم</dt>
+    <dd class="col-sm-9">@Model.DepartmentName</dd>
+
+    <dt class="col-sm-3">المسمى الوظيفي</dt>
+    <dd class="col-sm-9">@Model.JobTitleName</dd>
+
+    <dt class="col-sm-3">تاريخ التوظيف</dt>
+    <dd class="col-sm-9">@Model.HireDate.ToString("yyyy-MM-dd")</dd>
+
+    <dt class="col-sm-3">الحالة الوظيفية</dt>
+    <dd class="col-sm-9">@Model.EmploymentStatus</dd>
+
+</dl>
+
+<a asp-action="Edit"
+   asp-route-id="@Model.Id"
+   class="btn btn-primary">
+    تعديل
+</a>
+
+<a asp-action="Index"
+   class="btn btn-secondary">
+    رجوع
+</a>

@@ -59,11 +59,11 @@ namespace HRManagementSystem.Application.DTOs.Employees
 
         [Required]
         [DataType(DataType.Date)]
-        public DateOnly BirthDate { get; set; }
+        public DateTime BirthDate { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        public DateOnly HireDate { get; set; }
+        public DateTime HireDate { get; set; }
 
         [Required]
         public EmploymentStatus EmploymentStatus { get; set; }

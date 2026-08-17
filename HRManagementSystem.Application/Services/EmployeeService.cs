@@ -59,9 +59,11 @@ namespace HRManagementSystem.Application.Services
                         (e.ThirdNameAr ?? "") + " " +
                         e.LastNameAr,
 
+                    NationalId = e.NationalId,
                     DepartmentName = e.Department.NameAr,
                     JobTitleName = e.JobTitle.NameAr,
                     HireDate = e.HireDate,
+                    PhoneNumber = e.PhoneNumber,
                     EmploymentStatus = e.EmploymentStatus
                 })
                 .ToListAsync();
@@ -113,36 +115,6 @@ namespace HRManagementSystem.Application.Services
             return employee;
         }
 
-        public async Task<EmployeeFormDto> GetCreateFormAsync()
-        {
-            var departments = await _context.Departments
-                .AsNoTracking()
-                .Where(d => d.IsActive)
-                .OrderBy(d => d.NameAr)
-                .Select(d => new LookupDto
-                {
-                    Id = d.Id,
-                    Name = d.NameAr
-                })
-                .ToListAsync();
-
-            var jobTitles = await _context.JobTitles
-                .AsNoTracking()
-                .Where(j => j.IsActive)
-                .OrderBy(j => j.NameAr)
-                .Select(j => new LookupDto
-                {
-                    Id = j.Id,
-                    Name = j.NameAr
-                })
-                .ToListAsync();
-
-            return new EmployeeFormDto
-            {
-                Departments = departments,
-                JobTitles = jobTitles
-            };
-        }
         public async Task<UpdateEmployeeDto> GetForUpdateAsync(int id)
         {
             var employee = await _context.Employees
@@ -184,19 +156,7 @@ namespace HRManagementSystem.Application.Services
 
             return employee;
         }
-        public async Task<UpdateEmployeeFormDto> GetEditViewModelAsync(int id)
-        {
-            var employee = await GetForUpdateAsync(id);
-
-            var formData = await GetFormDataAsync();
-
-            return new UpdateEmployeeFormDto
-            {
-                Employee = employee,
-                Departments = formData.Departments,
-                JobTitles = formData.JobTitles
-            };
-        }
+        
         public async Task UpdateAsync(UpdateEmployeeDto dto)
         {
             var employee = await _context.Employees
@@ -284,24 +244,7 @@ namespace HRManagementSystem.Application.Services
         }
 
 
-        private async Task<EmployeeFormDto> GetFormDataAsync()
-        {
-            var departments = await _context.Departments
-                .Where(d => d.IsActive)
-                .Select(d => new LookupDto { Id = d.Id, Name = d.NameAr })
-                .ToListAsync();
-
-            var jobTitles = await _context.JobTitles
-                .Where(j => j.IsActive)
-                .Select(j => new LookupDto { Id = j.Id, Name = j.NameAr })
-                .ToListAsync();
-
-            return new EmployeeFormDto
-            {
-                Departments = departments,
-                JobTitles = jobTitles
-            };
-        }
+        
 
         private async Task ValidateDuplicateAsync(
             string employeeNumber,

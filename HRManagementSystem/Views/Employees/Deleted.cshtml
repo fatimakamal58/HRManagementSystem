@@ -1,0 +1,68 @@
+@model IEnumerable<EmployeeDto>
+
+@{
+    ViewData["Title"] = "الموظفون المحذوفون";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>الموظفون المحذوفون</h1>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>رقم الموظف</th>
+                <th>الاسم</th>
+                <th>رقم الهوية</th>
+                <th>القسم</th>
+                <th>المسمى الوظيفي</th>
+                <th>رقم الهاتف</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var employee in Model)
+            {
+                <tr>
+                    <td>@employee.EmployeeNumber</td>
+                    <td>@employee.FullNameAr</td>
+                    <td>@employee.NationalId</td>
+                    <td>@employee.DepartmentName</td>
+                    <td>@employee.JobTitleName</td>
+                    <td>@employee.PhoneNumber</td>
+                    <td>@employee.EmploymentStatus</td>
+
+                    
+
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Details"
+                               asp-route-id="@employee.Id"
+                               class="btn btn-sm btn-outline-info">
+                                التفاصيل
+                            </a>
+                            <form asp-action="Restore"
+                                  asp-route-id="@employee.Id"
+                                  method="post"
+                                  class="d-inline">
+
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    استعادة
+                                </button>
+                            </form>
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+   
+</div>
+
