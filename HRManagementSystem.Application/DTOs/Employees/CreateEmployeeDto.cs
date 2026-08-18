@@ -8,9 +8,6 @@ namespace HRManagementSystem.Application.DTOs.Employees
 {
     public class CreateEmployeeDto
     {
-        [Required]
-        [StringLength(30)]
-        public string EmployeeNumber { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]

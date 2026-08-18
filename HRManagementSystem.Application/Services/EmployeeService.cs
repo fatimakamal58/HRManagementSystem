@@ -24,7 +24,6 @@ namespace HRManagementSystem.Application.Services
             Normalize(dto);
 
             await ValidateDuplicateAsync(
-                dto.EmployeeNumber,
                 dto.NationalId,
                 dto.Email,
                 dto.PhoneNumber);
@@ -37,6 +36,7 @@ namespace HRManagementSystem.Application.Services
 
             MapEmployee(employee, dto);
 
+            employee.EmployeeNumber = await GenerateEmployeeNumberAsync();
             _context.Employees.Add(employee);
 
             await _context.SaveChangesAsync();
@@ -170,7 +170,6 @@ namespace HRManagementSystem.Application.Services
             Normalize(dto);
 
             await ValidateDuplicateAsync(
-                dto.EmployeeNumber,
                 dto.NationalId,
                 dto.Email,
                 dto.PhoneNumber,
@@ -244,23 +243,31 @@ namespace HRManagementSystem.Application.Services
         }
 
 
-        
+        private async Task<string> GenerateEmployeeNumberAsync()
+        {
+            var lastEmployee = await _context.Employees
+                .OrderByDescending(e => e.Id)
+                .FirstOrDefaultAsync();
+
+            if (lastEmployee is null)
+            {
+                return "EMP0001";
+            }
+
+            int lastNumber = int.Parse(lastEmployee.EmployeeNumber[3..]);
+
+            lastNumber++;
+
+            return $"EMP{lastNumber:D4}";
+        }
 
         private async Task ValidateDuplicateAsync(
-            string employeeNumber,
             string nationalId,
             string email,
             string phoneNumber,
             int? excludedEmployeeId = null)
         {
-            var employeeNumberExists = await _context.Employees
-                .AnyAsync(e =>
-                    e.EmployeeNumber == employeeNumber &&
-                    (!excludedEmployeeId.HasValue || e.Id != excludedEmployeeId.Value));
-
-            if (employeeNumberExists)
-                throw new DuplicateException("رقم الموظف مستخدم مسبقًا.");
-
+            
             var nationalIdExists = await _context.Employees
                 .AnyAsync(e =>
                     e.NationalId == nationalId &&
@@ -306,7 +313,6 @@ namespace HRManagementSystem.Application.Services
             Employee employee,
             UpdateEmployeeDto dto)
         {
-            employee.EmployeeNumber = dto.EmployeeNumber;
 
             employee.FirstNameAr = dto.FirstNameAr.Trim();
             employee.SecondNameAr = dto.SecondNameAr?.Trim();
@@ -334,7 +340,6 @@ namespace HRManagementSystem.Application.Services
             Employee employee,
             CreateEmployeeDto dto)
         {
-            employee.EmployeeNumber = dto.EmployeeNumber;
 
             employee.FirstNameAr = dto.FirstNameAr.Trim();
             employee.SecondNameAr = dto.SecondNameAr?.Trim();
@@ -361,14 +366,12 @@ namespace HRManagementSystem.Application.Services
 
         private static void Normalize(UpdateEmployeeDto dto)
         {
-            dto.EmployeeNumber = dto.EmployeeNumber.Trim();
             dto.NationalId = dto.NationalId.Trim();
             dto.Email = dto.Email.Trim().ToLowerInvariant();
             dto.PhoneNumber = dto.PhoneNumber.Trim();
         }
         private static void Normalize(CreateEmployeeDto dto)
         {
-            dto.EmployeeNumber = dto.EmployeeNumber.Trim();
             dto.NationalId = dto.NationalId.Trim();
             dto.Email = dto.Email.Trim().ToLowerInvariant();
             dto.PhoneNumber = dto.PhoneNumber.Trim();
