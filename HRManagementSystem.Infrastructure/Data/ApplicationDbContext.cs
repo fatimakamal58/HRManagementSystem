@@ -18,4 +18,12 @@ public class ApplicationDbContext : IdentityDbContext
 
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeSalary> EmployeeSalaries { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.ApplyConfigurationsFromAssembly(
+            typeof(ApplicationDbContext).Assembly);
+    }
 }
