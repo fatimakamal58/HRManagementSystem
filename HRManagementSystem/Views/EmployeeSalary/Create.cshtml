@@ -1,0 +1,75 @@
+@model CreateEmployeeSalaryViewModel
+
+@{
+    ViewData["Title"] = "Add Initial Salary";
+}
+
+<h2>Add Initial Salary</h2>
+
+<div class="mb-3">
+    <strong>Employee:</strong>
+    @Model.EmployeeName
+</div>
+
+<div class="mb-3">
+    <strong>Employee Number:</strong>
+    @Model.EmployeeNumber
+</div>
+
+<form asp-action="Create" method="post">
+
+    <input type="hidden" asp-for="EmployeeId" />
+
+    <div class="mb-3">
+        <label asp-for="BasicSalary" class="form-label">
+            Basic Salary
+        </label>
+
+        <input asp-for="BasicSalary"
+               class="form-control" />
+
+        <span asp-validation-for="BasicSalary"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EffectiveFrom" class="form-label">
+            Effective From
+        </label>
+
+        <input asp-for="EffectiveFrom"
+               type="date"
+               class="form-control" />
+
+        <span asp-validation-for="EffectiveFrom"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label">
+            Notes
+        </label>
+
+        <textarea asp-for="Notes"
+                  class="form-control"
+                  rows="3"></textarea>
+
+        <span asp-validation-for="Notes"
+              class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Save
+    </button>
+
+    <a asp-action="History"
+       asp-route-employeeId="@Model.EmployeeId"
+       class="btn btn-secondary">
+        Cancel
+    </a>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -43,7 +43,14 @@
                     
 
                     <td>
+                       
                         <div class="d-flex gap-2">
+                            <a asp-controller="EmployeeSalary"
+                               asp-action="History"
+                               asp-route-employeeId="@employee.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Salary
+                            </a>
                             <a asp-action="Edit"
                                asp-route-id="@employee.Id"
                                class="btn btn-sm btn-outline-primary">

@@ -1,0 +1,97 @@
+@model ChangeEmployeeSalaryViewModel
+
+@{
+    ViewData["Title"] = "Change Salary";
+}
+
+<h2>Change Salary</h2>
+
+<div class="mb-3">
+    <strong>Employee:</strong>
+    @Model.EmployeeName
+</div>
+
+<div class="mb-3">
+    <strong>Employee Number:</strong>
+    @Model.EmployeeNumber
+</div>
+
+<div class="mb-3">
+    <strong>Current Salary:</strong>
+    @Model.CurrentSalary.ToString("N2")
+</div>
+
+<form asp-action="Change" method="post">
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger mb-3">
+    </div>
+    <input type="hidden" asp-for="EmployeeId" />
+
+    <div class="mb-3">
+        <label asp-for="BasicSalary" class="form-label">
+            New Basic Salary
+        </label>
+
+        <input asp-for="BasicSalary"
+               class="form-control" />
+
+        <span asp-validation-for="BasicSalary"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EffectiveFrom" class="form-label">
+            Effective From
+        </label>
+
+        <input asp-for="EffectiveFrom"
+               type="date"
+               class="form-control" />
+
+        <span asp-validation-for="EffectiveFrom"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ChangeReason" class="form-label">
+            Change Reason
+        </label>
+
+        <select asp-for="ChangeReason"
+                asp-items="Model.ChangeReasons"
+                class="form-select">
+            <option value="">-- Select Reason --</option>
+        </select>
+
+        <span asp-validation-for="ChangeReason"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label">
+            Notes
+        </label>
+
+        <textarea asp-for="Notes"
+                  class="form-control"
+                  rows="3"></textarea>
+
+        <span asp-validation-for="Notes"
+              class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Save
+    </button>
+
+    <a asp-action="History"
+       asp-route-employeeId="@Model.EmployeeId"
+       class="btn btn-secondary">
+        Cancel
+    </a>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
