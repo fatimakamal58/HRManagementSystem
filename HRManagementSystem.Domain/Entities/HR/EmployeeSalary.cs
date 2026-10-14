@@ -18,7 +18,6 @@ namespace HRManagementSystem.Domain.Entities.HR
         public DateTime EffectiveFrom { get; set; }
 
         public DateTime? EffectiveTo { get; set; }
-        public bool IsCurrent { get; set; }
 
         public SalaryChangeReason ChangeReason { get; set; }
 

@@ -4,14 +4,12 @@ namespace HRManagementSystem.Application.Interfaces
 {
     public interface IEmployeeSalaryService
     {
-        Task<List<EmployeeSalaryDto>> GetAllAsync();
+        Task CreateInitialSalaryAsync(CreateInitialSalaryDto dto);
 
-        Task<EmployeeSalaryDto> GetByIdAsync(int id);
+        Task ChangeSalaryAsync(ChangeEmployeeSalaryDto dto);
 
-        Task CreateAsync(CreateEmployeeSalaryDto dto);
+        Task<EmployeeSalaryDto?> GetCurrentSalaryAsync(int employeeId);
 
-        Task UpdateAsync(UpdateEmployeeSalaryDto dto);
-
-        Task DeleteAsync(int id);
+        Task<List<EmployeeSalaryDto>> GetSalaryHistoryAsync(int employeeId);
     }
 }

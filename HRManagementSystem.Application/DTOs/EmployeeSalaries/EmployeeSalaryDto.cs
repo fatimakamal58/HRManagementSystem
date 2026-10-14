@@ -11,15 +11,11 @@ namespace HRManagementSystem.Application.DTOs.EmployeeSalaries
 
         public int EmployeeId { get; set; }
 
-        public string EmployeeName { get; set; } = string.Empty;
-
         public decimal BasicSalary { get; set; }
 
         public DateTime EffectiveFrom { get; set; }
 
         public DateTime? EffectiveTo { get; set; }
-
-        public bool IsCurrent { get; set; }
 
         public SalaryChangeReason ChangeReason { get; set; }
 

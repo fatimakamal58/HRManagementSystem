@@ -19,5 +19,6 @@ namespace HRManagementSystem.Application.Interfaces
         Task DeleteAsync(int id);
         Task<List<EmployeeDto>> GetDeletedAsync();
         Task RestoreAsync(int id);
+        Task<EmployeeDto> GetByIdIncludingInactiveAsync(int id);
     }
 }

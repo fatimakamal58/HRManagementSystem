@@ -36,5 +36,6 @@ namespace HRManagementSystem.Application.DTOs.Employees
         public int JobTitleId { get; set; }
 
         public string JobTitleName { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
     }
 }

@@ -1,12 +1,10 @@
-﻿using HRManagementSystem.Application.DTOs.Employees;
+﻿using System.Linq.Expressions;
+using HRManagementSystem.Application.DTOs.Employees;
 using HRManagementSystem.Application.Exceptions;
 using HRManagementSystem.Application.Interfaces;
 using HRManagementSystem.Domain.Entities.HR;
 using HRManagementSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HRManagementSystem.Application.Services
 {
@@ -64,7 +62,7 @@ namespace HRManagementSystem.Application.Services
                     JobTitleName = e.JobTitle.NameAr,
                     HireDate = e.HireDate,
                     PhoneNumber = e.PhoneNumber,
-                    EmploymentStatus = e.EmploymentStatus
+                    EmploymentStatus = e.EmploymentStatus,
                 })
                 .ToListAsync();
         }
@@ -74,37 +72,7 @@ namespace HRManagementSystem.Application.Services
             var employee = await _context.Employees
                 .AsNoTracking()
                 .Where(e => e.Id == id && e.IsActive)
-                .Select(e => new EmployeeDto
-                {
-                    Id = e.Id,
-                    EmployeeNumber = e.EmployeeNumber,
-
-                    FullNameAr =
-                        e.FirstNameAr + " " +
-                        (e.SecondNameAr ?? "") + " " +
-                        (e.ThirdNameAr ?? "") + " " +
-                        e.LastNameAr,
-
-                    FullNameEn =
-                        e.FirstNameEn + " " +
-                        (e.SecondNameEn ?? "") + " " +
-                        (e.ThirdNameEn ?? "") + " " +
-                        e.LastNameEn,
-
-                    NationalId = e.NationalId,
-                    PhoneNumber = e.PhoneNumber,
-                    Email = e.Email,
-                    Gender = e.Gender,
-                    BirthDate = e.BirthDate,
-                    HireDate = e.HireDate,
-                    EmploymentStatus = e.EmploymentStatus,
-
-                    DepartmentId = e.DepartmentId,
-                    DepartmentName = e.Department.NameAr,
-
-                    JobTitleId = e.JobTitleId,
-                    JobTitleName = e.JobTitle.NameAr
-                })
+                .Select(EmployeeProjection)
                 .FirstOrDefaultAsync();
 
             if (employee is null)
@@ -241,8 +209,60 @@ namespace HRManagementSystem.Application.Services
 
             await _context.SaveChangesAsync();
         }
+        
+        public async Task<EmployeeDto> GetByIdIncludingInactiveAsync(int id)
+        {
+            var employee = await _context.Employees
+                .AsNoTracking()
+                .Where(e => e.Id == id)
+                .Select(EmployeeProjection)
+                .FirstOrDefaultAsync();
 
+            if (employee is null)
+            {
+                throw new NotFoundException("الموظف غير موجود.");
+            }
 
+            return employee;
+        }
+        
+        //******** private methods **************
+        
+        private static readonly Expression<Func<Employee, EmployeeDto>>
+            EmployeeProjection = e => new EmployeeDto
+            {
+                Id = e.Id,
+                EmployeeNumber = e.EmployeeNumber,
+
+                FullNameAr =
+                    e.FirstNameAr + " " +
+                    (e.SecondNameAr ?? "") + " " +
+                    (e.ThirdNameAr ?? "") + " " +
+                    e.LastNameAr,
+
+                FullNameEn =
+                    e.FirstNameEn + " " +
+                    (e.SecondNameEn ?? "") + " " +
+                    (e.ThirdNameEn ?? "") + " " +
+                    e.LastNameEn,
+
+                NationalId = e.NationalId,
+                PhoneNumber = e.PhoneNumber,
+                Email = e.Email,
+                Gender = e.Gender,
+                BirthDate = e.BirthDate,
+                HireDate = e.HireDate,
+                EmploymentStatus = e.EmploymentStatus,
+
+                DepartmentId = e.DepartmentId,
+                DepartmentName = e.Department.NameAr,
+
+                JobTitleId = e.JobTitleId,
+                JobTitleName = e.JobTitle.NameAr,
+
+                IsActive = e.IsActive
+            };
+        
         private async Task<string> GenerateEmployeeNumberAsync()
         {
             var lastEmployee = await _context.Employees
