@@ -1,6 +1,8 @@
 namespace HRManagementSystem.Domain.Enums;
 
-public class ApproverType
+public enum ApproverType
 {
-    
+    DirectManager = 1,
+    HR = 2,
+    HRManager = 3
 }

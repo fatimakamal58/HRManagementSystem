@@ -71,5 +71,10 @@ public class EmployeeConfiguration
             .WithMany(j => j.Employees)
             .HasForeignKey(e => e.JobTitleId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne(e => e.Manager)
+            .WithMany(e => e.DirectReports)
+            .HasForeignKey(e => e.ManagerId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -65,12 +65,23 @@ public class Employee : BaseEntity
     public JobTitle JobTitle { get; set; } = null!;
 
     public DateTime HireDate { get; set; }
+    
+    public int? ManagerId { get; set; }
 
+    public Employee? Manager { get; set; }
+
+    public ICollection<Employee> DirectReports { get; set; }
+        = new List<Employee>();
     public EmploymentStatus EmploymentStatus { get; set; }
         = EmploymentStatus.Active;
     public ICollection<EmployeeSalary> Salaries { get; set; }
     = new List<EmployeeSalary>();
+    
+    public ICollection<LeaveBalance> LeaveBalances { get; set; }
+        = new List<LeaveBalance>();
 
+    public ICollection<LeaveRequest> LeaveRequests { get; set; }
+        = new List<LeaveRequest>();
     [NotMapped]
     public string FullNameAr =>
         string.Join(
