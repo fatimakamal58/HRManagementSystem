@@ -1,20 +1,23 @@
-﻿using System.Linq.Expressions;
-using HRManagementSystem.Application.DTOs.Employees;
+﻿using HRManagementSystem.Application.DTOs.Employees;
 using HRManagementSystem.Application.Exceptions;
 using HRManagementSystem.Application.Interfaces;
 using HRManagementSystem.Domain.Entities.HR;
 using HRManagementSystem.Infrastructure.Data;
+using HRManagementSystem.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace HRManagementSystem.Application.Services
 {
     public class EmployeeService : IEmployeeService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUserContextService _userContextService;
 
-        public EmployeeService(ApplicationDbContext context)
+        public EmployeeService(ApplicationDbContext context, IUserContextService userContextService)
         {
             _context = context;
+            _userContextService = userContextService;
         }
        
         public async Task CreateAsync(CreateEmployeeDto dto)
@@ -30,11 +33,16 @@ namespace HRManagementSystem.Application.Services
                 dto.DepartmentId,
                 dto.JobTitleId);
 
+            await ValidateUserAccountAsync(dto.UserId);
+
             var employee = new Employee();
 
             MapEmployee(employee, dto);
 
             employee.EmployeeNumber = await GenerateEmployeeNumberAsync();
+            employee.UserId = string.IsNullOrWhiteSpace(dto.UserId)
+                    ? null
+                    : dto.UserId;
             _context.Employees.Add(employee);
 
             await _context.SaveChangesAsync();
@@ -146,8 +154,15 @@ namespace HRManagementSystem.Application.Services
             await ValidateReferencesAsync(
                 dto.DepartmentId,
                 dto.JobTitleId);
+           
+            await ValidateUserAccountAsync(
+                dto.UserId,
+                employee.Id);
 
             MapEmployee(employee, dto);
+            employee.UserId = string.IsNullOrWhiteSpace(dto.UserId)
+                                ? null
+                                : dto.UserId;
             employee.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -395,6 +410,40 @@ namespace HRManagementSystem.Application.Services
             dto.NationalId = dto.NationalId.Trim();
             dto.Email = dto.Email.Trim().ToLowerInvariant();
             dto.PhoneNumber = dto.PhoneNumber.Trim();
+        }
+
+        private async Task ValidateUserAccountAsync(
+    string? userId,
+    int? currentEmployeeId = null)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return;
+
+            var userExists = await _context.Users
+                .AsNoTracking()
+                .AnyAsync(x => x.Id == userId);
+
+            if (!userExists)
+                throw new InvalidOperationException(
+                    "The selected user account does not exist.");
+
+            var alreadyLinked = await _context.Employees
+                .AsNoTracking()
+                .AnyAsync(x =>
+                    x.UserId == userId &&
+                    (!currentEmployeeId.HasValue ||
+                     x.Id != currentEmployeeId.Value));
+
+            if (alreadyLinked)
+                throw new InvalidOperationException(
+                    "The selected user account is already linked to another employee.");
+
+            var isAdmin = await _userContextService
+                .IsInRoleAsync(userId, "Admin");
+
+            if (isAdmin)
+                throw new InvalidOperationException(
+                    "Admin accounts cannot be linked to employees.");
         }
 
     }

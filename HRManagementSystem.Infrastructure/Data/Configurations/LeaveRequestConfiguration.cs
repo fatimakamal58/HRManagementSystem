@@ -22,5 +22,7 @@ public class LeaveRequestConfiguration
             .HasForeignKey(x => x.LeaveTypeId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Property(x => x.ChargedDays)
+            .HasColumnType("decimal(5,2)");
     }
 }

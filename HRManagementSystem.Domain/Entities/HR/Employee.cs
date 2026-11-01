@@ -65,7 +65,9 @@ public class Employee : BaseEntity
     public JobTitle JobTitle { get; set; } = null!;
 
     public DateTime HireDate { get; set; }
-    
+
+    public string? UserId { get; set; }
+
     public int? ManagerId { get; set; }
 
     public Employee? Manager { get; set; }

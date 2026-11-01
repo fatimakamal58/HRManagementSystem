@@ -16,6 +16,8 @@ public class LeaveRequest : BaseEntity
 
     public DateTime EndDate { get; set; }
 
+    public decimal ChargedDays { get; set; }
+
     public LeaveRequestStatus Status { get; set; }
         = LeaveRequestStatus.Pending;
 

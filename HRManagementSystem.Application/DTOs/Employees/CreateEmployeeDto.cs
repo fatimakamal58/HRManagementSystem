@@ -71,5 +71,7 @@ namespace HRManagementSystem.Application.DTOs.Employees
 
         [Range(1, int.MaxValue, ErrorMessage = "يجب اختيار المسمى الوظيفي.")]
         public int JobTitleId { get; set; }
+
+        public string? UserId { get; set; }
     }
 }

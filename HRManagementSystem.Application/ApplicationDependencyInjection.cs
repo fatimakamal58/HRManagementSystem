@@ -19,6 +19,8 @@ namespace HRManagementSystem.Application
             services.AddScoped<IJobTitleService, JobTitleService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IEmployeeSalaryService, EmployeeSalaryService>();
+            services.AddScoped<IWorkCalendarService, WorkCalendarService>();
+            services.AddScoped<ILeaveRequestService, LeaveRequestService>();
             return services;
         }
     }

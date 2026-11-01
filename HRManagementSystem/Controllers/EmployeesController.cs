@@ -1,6 +1,7 @@
 using HRManagementSystem.Application.DTOs.Employees;
 using HRManagementSystem.Application.Interfaces;
 using HRManagementSystem.Application.Services;
+using HRManagementSystem.Infrastructure.Identity;
 using HRManagementSystem.Web.ViewModels.Employees;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,15 +13,18 @@ public class EmployeesController : Controller
     private readonly IEmployeeService _employeeService;
     private readonly IDepartmentService _departmentService;
     private readonly IJobTitleService _jobTitleService;
+    private readonly IUserContextService _userContextService;
 
     public EmployeesController(
     IEmployeeService employeeService,
     IDepartmentService departmentService,
-    IJobTitleService jobTitleService)
+    IJobTitleService jobTitleService,
+    IUserContextService userContextService)
     {
         _employeeService = employeeService;
         _departmentService = departmentService;
         _jobTitleService = jobTitleService;
+        _userContextService = userContextService;
     }
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -72,7 +76,9 @@ public class EmployeesController : Controller
             Employee = employee
         };
 
-        await FillLookupsAsync(model);
+        await FillLookupsAsync(
+                    model,
+                    model.Employee.UserId);
 
         return View(model);
     }
@@ -82,7 +88,9 @@ public class EmployeesController : Controller
     {
         if (!ModelState.IsValid)
         {
-            await FillLookupsAsync(model);
+            await FillLookupsAsync(
+                    model,
+                    model.Employee.UserId);
 
             return View(model);
         }
@@ -130,10 +138,12 @@ public class EmployeesController : Controller
 
     // function to fill the dropdowns for departments and job titles
     private async Task FillLookupsAsync(
-    CreateEmployeeViewModel model)
+    CreateEmployeeViewModel model , string? currentUserId = null)
     {
         var departments = await _departmentService.GetLookupAsync();
         var jobTitles = await _jobTitleService.GetLookupAsync();
+        var users = await _userContextService
+        .GetAvailableUsersAsync(currentUserId);
 
         model.Departments = departments
             .Select(x => new SelectListItem
@@ -150,13 +160,23 @@ public class EmployeesController : Controller
                 Text = x.Name
             })
             .ToList();
+
+        model.Users = users
+      .Select(x => new SelectListItem
+      {
+          Value = x.Id,
+          Text = x.Email
+      })
+      .ToList();
     }
     //overloaded function to fill the dropdowns for departments and job titles for update view model
     private async Task FillLookupsAsync(
-   UpdateEmployeeViewModel model)
+   UpdateEmployeeViewModel model , string? currentUserId = null)
     {
         var departments = await _departmentService.GetLookupAsync();
         var jobTitles = await _jobTitleService.GetLookupAsync();
+        var users = await _userContextService
+        .GetAvailableUsersAsync(currentUserId);
 
         model.Departments = departments
             .Select(x => new SelectListItem
@@ -171,6 +191,13 @@ public class EmployeesController : Controller
             {
                 Value = x.Id.ToString(),
                 Text = x.Name
+            })
+            .ToList();
+        model.Users = users
+            .Select(x => new SelectListItem
+            {
+                Value = x.Id,
+                Text = x.Email
             })
             .ToList();
     }

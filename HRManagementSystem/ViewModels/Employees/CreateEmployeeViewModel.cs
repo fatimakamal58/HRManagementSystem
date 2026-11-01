@@ -10,5 +10,7 @@ namespace HRManagementSystem.Web.ViewModels.Employees
         public List<SelectListItem> Departments { get; set; } = [];
 
         public List<SelectListItem> JobTitles { get; set; } = [];
+
+        public List<SelectListItem> Users { get; set; } = [];
     }
 }

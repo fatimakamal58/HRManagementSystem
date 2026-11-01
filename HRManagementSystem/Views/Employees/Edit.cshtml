@@ -144,6 +144,20 @@
         </div>
 
         <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Employee.UserId" class="form-label">
+                User Account
+            </label>
+
+            <select asp-for="Employee.UserId"
+                    asp-items="Model.Users"
+                    class="form-select">
+                <option value="">-- No User Account --</option>
+            </select>
+
+            <span asp-validation-for="Employee.UserId"
+                  class="text-danger"></span>
+        </div>
             <div class="col-md-6 mb-3">
                 <label asp-for="Employee.EmploymentStatus"
                        class="form-label">حالة الموظف</label>
