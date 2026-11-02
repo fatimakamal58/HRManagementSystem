@@ -21,6 +21,7 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString));
 
         services.AddScoped<IUserContextService, UserContextService>();
+        services.AddScoped<IUserManagementService, UserManagementService>();
 
         return services;
     }

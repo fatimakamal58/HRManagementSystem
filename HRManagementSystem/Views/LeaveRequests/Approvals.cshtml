@@ -1,0 +1,186 @@
+﻿@model List<PendingLeaveApprovalDto>
+
+@{
+    ViewData["Title"] = "طلبات الموافقة";
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h2 class="mb-1">طلبات الموافقة</h2>
+        <p class="text-muted mb-0">
+            طلبات الإجازة التي تنتظر إجراءك.
+        </p>
+    </div>
+
+    @if (TempData["SuccessMessage"] is not null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] is not null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info">
+            لا توجد طلبات تنتظر موافقتك حاليًا.
+        </div>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="card mb-3">
+
+                <div class="card-header d-flex
+                    justify-content-between
+                    align-items-center">
+
+                    <strong>@item.EmployeeName</strong>
+
+                    <span class="badge bg-warning text-dark">
+                        المرحلة @item.StepOrder
+                    </span>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-3">
+                            <strong>نوع الإجازة</strong>
+                            <div>@item.LeaveTypeName</div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <strong>من</strong>
+                            <div>
+                                @item.StartDate.ToString("yyyy-MM-dd")
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <strong>إلى</strong>
+                            <div>
+                                @item.EndDate.ToString("yyyy-MM-dd")
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <strong>عدد الأيام</strong>
+                            <div>@item.ChargedDays</div>
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>السبب</strong>
+                        <div>
+                            @(string.IsNullOrWhiteSpace(item.Reason)
+                                ? "-"
+                                : item.Reason)
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>مرحلة الموافقة الحالية</strong>
+
+                        <div>
+                            @switch (item.ApproverType)
+                            {
+                                case ApproverType.DirectManager:
+                                    <span>المدير المباشر</span>
+                                    break;
+
+                                case ApproverType.HR:
+                                    <span>الموارد البشرية</span>
+                                    break;
+
+                                case ApproverType.HRManager:
+                                    <span>مدير الموارد البشرية</span>
+                                    break;
+                            }
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <form asp-action="Approve"
+                                  method="post">
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@item.LeaveRequestId" />
+
+                                <div class="mb-2">
+                                    <label class="form-label">
+                                        تعليق الاعتماد
+                                        <span class="text-muted">
+                                            (اختياري)
+                                        </span>
+                                    </label>
+
+                                    <textarea name="comment"
+                                              class="form-control"
+                                              rows="2"></textarea>
+                                </div>
+
+                                <button type="submit"
+                                        class="btn btn-success">
+                                    اعتماد
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <form asp-action="Reject"
+                                  method="post">
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@item.LeaveRequestId" />
+
+                                <div class="mb-2">
+                                    <label class="form-label">
+                                        سبب الرفض
+                                    </label>
+
+                                    <textarea name="comment"
+                                              class="form-control"
+                                              rows="2"
+                                              required></textarea>
+                                </div>
+
+                                <button type="submit"
+                                        class="btn btn-outline-danger"
+                                        onclick="return confirm('هل أنت متأكد من رفض الطلب؟');">
+                                    رفض
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        }
+    }
+
+</div>

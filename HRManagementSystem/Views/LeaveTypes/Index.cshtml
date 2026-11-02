@@ -1,0 +1,76 @@
+﻿@model List<HRManagementSystem.Application.DTOs.LeaveTypes.LeaveTypeDto>
+
+@{
+    ViewData["Title"] = "أنواع الإجازات";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>أنواع الإجازات</h3>
+
+        <a asp-action="Create" class="btn btn-primary">
+            إضافة نوع إجازة
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>الاسم بالعربي</th>
+                        <th>الاسم بالإنجليزي</th>
+                        <th>يتطلب رصيد</th>
+                        <th>الأيام السنوية</th>
+                        <th>ترحيل الرصيد</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.NameAr</td>
+                            <td>@item.NameEn</td>
+
+                            <td>
+                                @(item.RequiresBalance ? "نعم" : "لا")
+                            </td>
+
+                            <td>
+                                @(item.DefaultDaysPerYear?.ToString() ?? "-")
+                            </td>
+
+                            <td>
+                                @(item.AllowCarryForward ? "نعم" : "لا")
+                            </td>
+
+                            <td>
+                                @(item.IsActive ? "مفعّل" : "غير مفعّل")
+                            </td>
+                            <td>
+                                <a asp-action="Workflow"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-primary">
+                                    مسار الموافقات
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

@@ -1,6 +1,7 @@
 using HRManagementSystem.Application.DTOs.Employees;
 using HRManagementSystem.Application.Interfaces;
 using HRManagementSystem.Application.Services;
+using HRManagementSystem.Domain.Enums;
 using HRManagementSystem.Infrastructure.Identity;
 using HRManagementSystem.Web.ViewModels.Employees;
 using Microsoft.AspNetCore.Mvc;
@@ -138,12 +139,16 @@ public class EmployeesController : Controller
 
     // function to fill the dropdowns for departments and job titles
     private async Task FillLookupsAsync(
-    CreateEmployeeViewModel model , string? currentUserId = null)
+     CreateEmployeeViewModel model,
+     string? currentUserId = null)
     {
         var departments = await _departmentService.GetLookupAsync();
         var jobTitles = await _jobTitleService.GetLookupAsync();
+
         var users = await _userContextService
-        .GetAvailableUsersAsync(currentUserId);
+            .GetAvailableUsersAsync(currentUserId);
+
+        var employees = await _employeeService.GetAllAsync();
 
         model.Departments = departments
             .Select(x => new SelectListItem
@@ -161,43 +166,77 @@ public class EmployeesController : Controller
             })
             .ToList();
 
-        model.Users = users
-      .Select(x => new SelectListItem
-      {
-          Value = x.Id,
-          Text = x.Email
-      })
-      .ToList();
-    }
-    //overloaded function to fill the dropdowns for departments and job titles for update view model
-    private async Task FillLookupsAsync(
-   UpdateEmployeeViewModel model , string? currentUserId = null)
-    {
-        var departments = await _departmentService.GetLookupAsync();
-        var jobTitles = await _jobTitleService.GetLookupAsync();
-        var users = await _userContextService
-        .GetAvailableUsersAsync(currentUserId);
-
-        model.Departments = departments
-            .Select(x => new SelectListItem
-            {
-                Value = x.Id.ToString(),
-                Text = x.Name
-            })
-            .ToList();
-
-        model.JobTitles = jobTitles
-            .Select(x => new SelectListItem
-            {
-                Value = x.Id.ToString(),
-                Text = x.Name
-            })
-            .ToList();
         model.Users = users
             .Select(x => new SelectListItem
             {
                 Value = x.Id,
                 Text = x.Email
+            })
+            .ToList();
+
+        model.Managers = employees
+            .Where(x =>
+                x.IsActive &&
+                x.EmploymentStatus == EmploymentStatus.Active)
+            .OrderBy(x => x.FullNameEn)
+            .Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.FullNameEn
+            })
+            .ToList();
+    }
+    //overloaded function to fill the dropdowns for departments and job titles for update view model
+    private async Task FillLookupsAsync(
+     UpdateEmployeeViewModel model,
+     string? currentUserId = null)
+    {
+        var departments =
+            await _departmentService.GetLookupAsync();
+
+        var jobTitles =
+            await _jobTitleService.GetLookupAsync();
+
+        var users = await _userContextService
+            .GetAvailableUsersAsync(currentUserId);
+
+        var employees =
+            await _employeeService.GetAllAsync();
+
+        model.Departments = departments
+            .Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.Name
+            })
+            .ToList();
+
+        model.JobTitles = jobTitles
+            .Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.Name
+            })
+            .ToList();
+
+        model.Users = users
+            .Select(x => new SelectListItem
+            {
+                Value = x.Id,
+                Text = x.Email
+            })
+            .ToList();
+
+        model.Managers = employees
+            .Where(x =>
+                x.Id != model.Employee.Id &&
+                x.IsActive &&
+                x.EmploymentStatus == EmploymentStatus.Active)
+            .OrderBy(x => x.FullNameEn)
+            .Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.FullNameEn
             })
             .ToList();
     }

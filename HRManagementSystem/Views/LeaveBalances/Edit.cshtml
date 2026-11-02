@@ -1,0 +1,121 @@
+﻿@model HRManagementSystem.Application.DTOs.LeaveBalances.UpdateLeaveBalanceDto
+
+
+@{
+    ViewData["Title"] = "تعديل رصيد الإجازة";
+}
+
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+                    <h4 class="mb-0">تعديل رصيد الإجازة</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-action="Edit" method="post">
+
+                        <input asp-for="Id" type="hidden" />
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label">الموظف</label>
+
+                            <input value="@Model.EmployeeName"
+                                   class="form-control"
+                                   readonly />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">نوع الإجازة</label>
+
+                            <input value="@Model.LeaveTypeName"
+                                   class="form-control"
+                                   readonly />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">السنة</label>
+
+                            <input value="@Model.Year"
+                                   class="form-control"
+                                   readonly />
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label asp-for="AllocatedDays"
+                                       class="form-label">
+                                    الرصيد المخصص
+                                </label>
+
+                                <input type="number"
+                                       id="AllocatedDays"
+                                       name="AllocatedDays"
+                                       value="@Model.AllocatedDays.ToString("0.##", CultureInfo.InvariantCulture)"
+                                       class="form-control"
+                                       min="0"
+                                       step="0.5" />
+
+                                <span asp-validation-for="AllocatedDays"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label asp-for="CarryForwardDays"
+                                       class="form-label">
+                                    الرصيد المرحّل
+                                </label>
+
+                                <input type="number"
+                                       id="CarryForwardDays"
+                                       name="CarryForwardDays"
+                                       value="@Model.CarryForwardDays.ToString("0.##", CultureInfo.InvariantCulture)"
+                                       class="form-control"
+                                       min="0"
+                                       step="0.5" />
+
+                                <span asp-validation-for="CarryForwardDays"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <a asp-action="Index"
+                               class="btn btn-secondary">
+                                رجوع
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                حفظ التعديلات
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

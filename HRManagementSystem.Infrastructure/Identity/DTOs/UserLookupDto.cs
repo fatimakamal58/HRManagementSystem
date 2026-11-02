@@ -1,4 +1,4 @@
-﻿namespace HRManagementSystem.Infrastructure.Identity;
+﻿namespace HRManagementSystem.Infrastructure.Identity.DTOs;
 
 public class UserLookupDto
 {

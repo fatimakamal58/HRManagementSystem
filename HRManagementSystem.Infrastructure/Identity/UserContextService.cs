@@ -1,5 +1,5 @@
 ﻿using HRManagementSystem.Infrastructure.Data;
-using HRManagementSystem.Infrastructure.Identity;
+using HRManagementSystem.Infrastructure.Identity.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

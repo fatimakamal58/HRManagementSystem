@@ -1,5 +1,7 @@
 ﻿
 
+using HRManagementSystem.Infrastructure.Identity.DTOs;
+
 namespace HRManagementSystem.Infrastructure.Identity
 {
     public interface IUserContextService

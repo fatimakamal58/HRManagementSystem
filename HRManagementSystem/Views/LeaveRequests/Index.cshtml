@@ -1,0 +1,158 @@
+﻿@using HRManagementSystem.Domain.Enums
+@model List<HRManagementSystem.Application.DTOs.LeaveRequests.LeaveRequestDto>
+
+@{
+    ViewData["Title"] = "طلباتي";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">طلبات الإجازة</h2>
+            <p class="text-muted mb-0">
+                عرض ومتابعة طلبات الإجازة الخاصة بك
+            </p>
+        </div>
+
+        <a asp-action="Create"
+           class="btn btn-primary">
+            طلب إجازة جديد
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is not null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] is not null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info">
+            لا توجد لديك طلبات إجازة حتى الآن.
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>نوع الإجازة</th>
+                                <th>من</th>
+                                <th>إلى</th>
+                                <th>الأيام</th>
+                                <th>الحالة</th>
+                                <th>السبب</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @item.LeaveTypeName
+                                    </td>
+
+                                    <td>
+                                        @item.StartDate.ToString("yyyy-MM-dd")
+                                    </td>
+
+                                    <td>
+                                        @item.EndDate.ToString("yyyy-MM-dd")
+                                    </td>
+
+                                    <td>
+                                        @item.ChargedDays
+                                    </td>
+
+                                    <td>
+                                        @switch (item.Status)
+                                        {
+                                            case LeaveRequestStatus.Pending:
+                                                <span class="badge bg-warning text-dark">
+                                                    قيد الانتظار
+                                                </span>
+                                                break;
+
+                                            case LeaveRequestStatus.Approved:
+                                                <span class="badge bg-success">
+                                                    معتمد
+                                                </span>
+                                                break;
+
+                                            case LeaveRequestStatus.Rejected:
+                                                <span class="badge bg-danger">
+                                                    مرفوض
+                                                </span>
+                                                break;
+
+                                            case LeaveRequestStatus.Cancelled:
+                                                <span class="badge bg-secondary">
+                                                    ملغي
+                                                </span>
+                                                break;
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @(string.IsNullOrWhiteSpace(item.Reason)
+                                            ? "-"
+                                            : item.Reason)
+                                    </td>
+
+                                    <td>
+                                        @if (item.Status == LeaveRequestStatus.Pending ||
+                                             (item.Status == LeaveRequestStatus.Approved &&
+                                              item.StartDate.Date > DateTime.Today))
+                                        {
+                                            <form asp-action="Cancel"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('هل أنت متأكد من إلغاء طلب الإجازة؟');">
+                                                    إلغاء
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    }
+
+</div>

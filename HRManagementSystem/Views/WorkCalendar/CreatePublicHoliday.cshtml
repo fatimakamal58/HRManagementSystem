@@ -1,0 +1,106 @@
+﻿@model CreatePublicHolidayDto
+
+@{
+    ViewData["Title"] = "إضافة عطلة رسمية";
+}
+
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+                    <h4 class="mb-0">إضافة عطلة رسمية</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-action="CreatePublicHoliday" method="post">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="NameAr"
+                                   class="form-label">
+                                الاسم بالعربي
+                            </label>
+
+                            <input asp-for="NameAr"
+                                   class="form-control" />
+
+                            <span asp-validation-for="NameAr"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="NameEn"
+                                   class="form-label">
+                                الاسم بالإنجليزي
+                            </label>
+
+                            <input asp-for="NameEn"
+                                   class="form-control" />
+
+                            <span asp-validation-for="NameEn"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StartDate"
+                                       class="form-label">
+                                    تاريخ البداية
+                                </label>
+
+                                <input asp-for="StartDate"
+                                       class="form-control" />
+
+                                <span asp-validation-for="StartDate"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EndDate"
+                                       class="form-label">
+                                    تاريخ النهاية
+                                </label>
+
+                                <input asp-for="EndDate"
+                                       class="form-control" />
+
+                                <span asp-validation-for="EndDate"
+                                      class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <a asp-action="PublicHolidays"
+                               class="btn btn-secondary">
+                                رجوع
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                حفظ
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

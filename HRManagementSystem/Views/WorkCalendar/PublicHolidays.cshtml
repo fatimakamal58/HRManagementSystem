@@ -1,0 +1,116 @@
+﻿@model List<PublicHolidayDto>
+
+@{
+    ViewData["Title"] = "العطلات الرسمية";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3>العطلات الرسمية</h3>
+            <p class="text-muted mb-0">
+                إدارة العطلات المستخدمة في حساب أيام الإجازات.
+            </p>
+        </div>
+
+        <a asp-action="CreatePublicHoliday"
+           class="btn btn-primary">
+            إضافة عطلة رسمية
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            @if (Model.Count == 0)
+            {
+                <div class="alert alert-info mb-0">
+                    لا توجد عطلات رسمية مسجلة.
+                </div>
+            }
+            else
+            {
+                <table class="table table-striped align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>الاسم بالعربي</th>
+                            <th>الاسم بالإنجليزي</th>
+                            <th>من</th>
+                            <th>إلى</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.NameAr</td>
+                                <td>@item.NameEn</td>
+                                <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                                <td>@item.EndDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @(item.IsActive ? "مفعّلة" : "غير مفعّلة")
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+
+                                        <a asp-action="EditPublicHoliday"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            تعديل
+                                        </a>
+
+                                        @if (item.IsActive)
+                                        {
+                                            <form asp-action="DeactivatePublicHoliday"
+                                                  asp-route-id="@item.Id"
+                                                  method="post">
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger">
+                                                    تعطيل
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="ActivatePublicHoliday"
+                                                  asp-route-id="@item.Id"
+                                                  method="post">
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-success">
+                                                    تفعيل
+                                                </button>
+
+                                            </form>
+                                        }
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+        </div>
+    </div>
+</div>

@@ -2,6 +2,7 @@
 using HRManagementSystem.Application.Exceptions;
 using HRManagementSystem.Application.Interfaces;
 using HRManagementSystem.Domain.Entities.HR;
+using HRManagementSystem.Domain.Enums;
 using HRManagementSystem.Infrastructure.Data;
 using HRManagementSystem.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,8 @@ namespace HRManagementSystem.Application.Services
             await ValidateReferencesAsync(
                 dto.DepartmentId,
                 dto.JobTitleId);
+
+            await ValidateManagerAsync(dto.ManagerId);
 
             await ValidateUserAccountAsync(dto.UserId);
 
@@ -65,12 +68,29 @@ namespace HRManagementSystem.Application.Services
                         (e.ThirdNameAr ?? "") + " " +
                         e.LastNameAr,
 
+                    FullNameEn =
+                        e.FirstNameEn + " " +
+                        (e.SecondNameEn ?? "") + " " +
+                        (e.ThirdNameEn ?? "") + " " +
+                        e.LastNameEn,
+
                     NationalId = e.NationalId,
-                    DepartmentName = e.Department.NameAr,
-                    JobTitleName = e.JobTitle.NameAr,
-                    HireDate = e.HireDate,
                     PhoneNumber = e.PhoneNumber,
+                    Email = e.Email,
+
+                    Gender = e.Gender,
+                    BirthDate = e.BirthDate,
+                    HireDate = e.HireDate,
+
                     EmploymentStatus = e.EmploymentStatus,
+
+                    DepartmentId = e.DepartmentId,
+                    DepartmentName = e.Department.NameAr,
+
+                    JobTitleId = e.JobTitleId,
+                    JobTitleName = e.JobTitle.NameAr,
+
+                    IsActive = e.IsActive
                 })
                 .ToListAsync();
         }
@@ -121,7 +141,10 @@ namespace HRManagementSystem.Application.Services
                     EmploymentStatus = e.EmploymentStatus,
 
                     DepartmentId = e.DepartmentId,
-                    JobTitleId = e.JobTitleId
+                    JobTitleId = e.JobTitleId,
+
+                    ManagerId = e.ManagerId,
+                    UserId = e.UserId
                 })
                 .FirstOrDefaultAsync();
 
@@ -154,7 +177,11 @@ namespace HRManagementSystem.Application.Services
             await ValidateReferencesAsync(
                 dto.DepartmentId,
                 dto.JobTitleId);
-           
+
+            await ValidateManagerAsync(
+                dto.ManagerId,
+                dto.Id);
+
             await ValidateUserAccountAsync(
                 dto.UserId,
                 employee.Id);
@@ -370,6 +397,7 @@ namespace HRManagementSystem.Application.Services
 
             employee.DepartmentId = dto.DepartmentId;
             employee.JobTitleId = dto.JobTitleId;
+            employee.ManagerId = dto.ManagerId;
         }
         private static void MapEmployee(
             Employee employee,
@@ -397,6 +425,35 @@ namespace HRManagementSystem.Application.Services
 
             employee.DepartmentId = dto.DepartmentId;
             employee.JobTitleId = dto.JobTitleId;
+            employee.ManagerId = dto.ManagerId;
+        }
+
+        private async Task ValidateManagerAsync(
+     int? managerId,
+     int? employeeId = null)
+        {
+            if (!managerId.HasValue)
+                return;
+
+            if (employeeId.HasValue &&
+                managerId.Value == employeeId.Value)
+            {
+                throw new InvalidOperationException(
+                    "Employee cannot be their own manager.");
+            }
+
+            var managerExists = await _context.Employees
+                .AsNoTracking()
+                .AnyAsync(x =>
+                    x.Id == managerId.Value &&
+                    x.IsActive &&
+                    x.EmploymentStatus == EmploymentStatus.Active);
+
+            if (!managerExists)
+            {
+                throw new InvalidOperationException(
+                    "The selected manager does not exist or is not active.");
+            }
         }
 
         private static void Normalize(UpdateEmployeeDto dto)

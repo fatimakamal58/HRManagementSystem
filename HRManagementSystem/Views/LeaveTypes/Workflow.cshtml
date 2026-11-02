@@ -1,0 +1,142 @@
+﻿@model LeaveApprovalWorkflowViewModel
+
+
+@{
+    ViewData["Title"] = "مسار الموافقات";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3>مسار الموافقات</h3>
+            <p class="text-muted mb-0">
+                نوع الإجازة: @Model.LeaveTypeName
+            </p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            رجوع
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <strong>إضافة خطوة موافقة</strong>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="AddApprovalStep" method="post">
+
+                <input type="hidden"
+                       asp-for="NewStep.LeaveTypeId"
+                       name="LeaveTypeId" />
+
+                <div class="row align-items-end">
+
+                    <div class="col-md-8">
+                        <label class="form-label">
+                            جهة الموافقة
+                        </label>
+
+                        <select asp-for="NewStep.ApproverType"
+                                name="ApproverType"
+                                class="form-select">
+                            <option value="">-- اختر جهة الموافقة --</option>
+
+                            <option value="@((int)ApproverType.DirectManager)">
+                                المدير المباشر
+                            </option>
+
+                            <option value="@((int)ApproverType.HR)">
+                                الموارد البشرية
+                            </option>
+
+                            <option value="@((int)ApproverType.HRManager)">
+                                مدير الموارد البشرية
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+                            إضافة الخطوة
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <strong>خطوات الموافقة الحالية</strong>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.Steps.Count == 0)
+            {
+                <div class="alert alert-warning mb-0">
+                    لم يتم إعداد مسار موافقات لهذا النوع بعد.
+                </div>
+            }
+            else
+            {
+                <table class="table table-striped align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>الترتيب</th>
+                            <th>جهة الموافقة</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var step in Model.Steps)
+                        {
+                            <tr>
+                                <td>@step.StepOrder</td>
+
+                                <td>
+                                    @switch (step.ApproverType)
+                                    {
+                                        case ApproverType.DirectManager:
+                                            <span>المدير المباشر</span>
+                                            break;
+
+                                        case ApproverType.HR:
+                                            <span>الموارد البشرية</span>
+                                            break;
+
+                                        case ApproverType.HRManager:
+                                            <span>مدير الموارد البشرية</span>
+                                            break;
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+        </div>
+    </div>
+</div>

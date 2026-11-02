@@ -28,4 +28,8 @@
     <ProjectReference Include="..\HRManagementSystem.Infrastructure\HRManagementSystem.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\Users\" />
+  </ItemGroup>
+
 </Project>

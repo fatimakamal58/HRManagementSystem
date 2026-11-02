@@ -115,7 +115,26 @@
             <span asp-validation-for="Employee.JobTitleId" class="text-danger"></span>
         </div>
     </div>
+    <div class="row">
+        <div class="mb-3">
+            <label asp-for="Employee.ManagerId"
+                   class="form-label">
+                المدير المباشر
+            </label>
 
+            <select asp-for="Employee.ManagerId"
+                    asp-items="Model.Managers"
+                    class="form-select">
+                <option value="">
+                    -- بدون مدير مباشر --
+                </option>
+            </select>
+
+            <span asp-validation-for="Employee.ManagerId"
+                  class="text-danger">
+            </span>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6 mb-3">
             <label asp-for="Employee.PhoneNumber" class="form-label">رقم الهاتف</label>

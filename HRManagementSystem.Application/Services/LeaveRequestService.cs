@@ -1,4 +1,5 @@
-﻿using HRManagementSystem.Application.DTOs.LeaveRequests;
+﻿using HRManagementSystem.Application.DTOs.LeaveBalances;
+using HRManagementSystem.Application.DTOs.LeaveRequests;
 using HRManagementSystem.Application.Interfaces;
 using HRManagementSystem.Domain.Entities.HR;
 using HRManagementSystem.Domain.Enums;
@@ -24,12 +25,18 @@ public class LeaveRequestService : ILeaveRequestService
         _userContextService = userContextService;
     }
 
-    public async Task CreateAsync(CreateLeaveRequestDto dto)
+    public async Task CreateAsync(CreateLeaveRequestDto dto, string currentUserId)
     {
+        var employeeId =
+    await _userContextService.GetEmployeeIdAsync(currentUserId);
+
+        if (employeeId is null)
+            throw new UnauthorizedAccessException(
+                "The current user is not linked to an employee.");
         var employeeExists = await _context.Employees
             .AsNoTracking()
             .AnyAsync(x =>
-                x.Id == dto.EmployeeId &&
+                x.Id == employeeId.Value &&
                 x.IsActive);
 
         if (!employeeExists)
@@ -68,7 +75,7 @@ public class LeaveRequestService : ILeaveRequestService
         var hasOverlappingLeave = await _context.LeaveRequests
     .AsNoTracking()
     .AnyAsync(x =>
-        x.EmployeeId == dto.EmployeeId &&
+        x.EmployeeId == employeeId.Value &&
         (x.Status == LeaveRequestStatus.Pending ||
          x.Status == LeaveRequestStatus.Approved) &&
         x.StartDate <= endDate &&
@@ -97,7 +104,7 @@ public class LeaveRequestService : ILeaveRequestService
             var balance = await _context.LeaveBalances
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x =>
-                    x.EmployeeId == dto.EmployeeId &&
+                    x.EmployeeId == employeeId.Value &&
                     x.LeaveTypeId == dto.LeaveTypeId &&
                     x.Year == startDate.Year);
 
@@ -112,7 +119,7 @@ public class LeaveRequestService : ILeaveRequestService
             var used = await _context.LeaveRequests
                 .AsNoTracking()
                 .Where(x =>
-                    x.EmployeeId == dto.EmployeeId &&
+                    x.EmployeeId == employeeId.Value &&
                     x.LeaveTypeId == dto.LeaveTypeId &&
                     x.StartDate.Year == startDate.Year &&
                     x.Status == LeaveRequestStatus.Approved)
@@ -121,7 +128,7 @@ public class LeaveRequestService : ILeaveRequestService
             var reserved = await _context.LeaveRequests
                 .AsNoTracking()
                 .Where(x =>
-                    x.EmployeeId == dto.EmployeeId &&
+                    x.EmployeeId == employeeId.Value &&
                     x.LeaveTypeId == dto.LeaveTypeId &&
                     x.StartDate.Year == startDate.Year &&
                     x.Status == LeaveRequestStatus.Pending)
@@ -138,7 +145,7 @@ public class LeaveRequestService : ILeaveRequestService
 
         var leaveRequest = new LeaveRequest
         {
-            EmployeeId = dto.EmployeeId,
+            EmployeeId = employeeId.Value,
             LeaveTypeId = dto.LeaveTypeId,
             StartDate = startDate,
             EndDate = endDate,
@@ -176,35 +183,40 @@ public class LeaveRequestService : ILeaveRequestService
 
     }
 
-    public async Task CancelAsync(int leaveRequestId)
+    public async Task CancelAsync(
+     int leaveRequestId,
+     string currentUserId)
     {
         var leaveRequest = await _context.LeaveRequests
             .FirstOrDefaultAsync(x => x.Id == leaveRequestId);
 
         if (leaveRequest is null)
-        {
             throw new InvalidOperationException(
                 "Leave request was not found.");
-        }
+
+        var employeeId =
+            await _userContextService.GetEmployeeIdAsync(currentUserId);
+
+        if (employeeId is null)
+            throw new UnauthorizedAccessException(
+                "The current user is not linked to an employee.");
+
+        if (leaveRequest.EmployeeId != employeeId.Value)
+            throw new UnauthorizedAccessException(
+                "You can only cancel your own leave requests.");
 
         if (leaveRequest.Status == LeaveRequestStatus.Cancelled)
-        {
             throw new InvalidOperationException(
                 "Leave request is already cancelled.");
-        }
 
         if (leaveRequest.Status == LeaveRequestStatus.Rejected)
-        {
             throw new InvalidOperationException(
                 "A rejected leave request cannot be cancelled.");
-        }
 
         if (leaveRequest.Status == LeaveRequestStatus.Approved &&
             leaveRequest.StartDate.Date <= DateTime.Today)
-        {
             throw new InvalidOperationException(
                 "An approved leave request cannot be cancelled after the leave has started.");
-        }
 
         leaveRequest.Status = LeaveRequestStatus.Cancelled;
 
@@ -356,5 +368,213 @@ public class LeaveRequestService : ILeaveRequestService
             throw new InvalidOperationException(
                 "Unsupported approver type.");
         }
+    }
+
+    public async Task<List<LeaveBalanceDto>> GetMyBalancesAsync(
+    string currentUserId)
+    {
+        var employeeId =
+            await _userContextService.GetEmployeeIdAsync(currentUserId);
+
+        if (employeeId is null)
+            throw new UnauthorizedAccessException(
+                "The current user is not linked to an employee.");
+
+        var balances = await _context.LeaveBalances
+            .AsNoTracking()
+            .Where(x =>
+                x.IsActive &&
+                x.EmployeeId == employeeId.Value)
+            .Select(x => new
+            {
+                x.Id,
+                x.EmployeeId,
+                EmployeeName =
+                    x.Employee.FirstNameEn + " " + x.Employee.LastNameEn,
+
+                x.LeaveTypeId,
+                LeaveTypeName = x.LeaveType.NameAr,
+
+                x.Year,
+                x.AllocatedDays,
+                x.CarryForwardDays
+            })
+            .OrderByDescending(x => x.Year)
+            .ThenBy(x => x.LeaveTypeName)
+            .ToListAsync();
+
+        var leaveUsage = await _context.LeaveRequests
+            .AsNoTracking()
+            .Where(x =>
+                x.EmployeeId == employeeId.Value &&
+                (x.Status == LeaveRequestStatus.Approved ||
+                 x.Status == LeaveRequestStatus.Pending))
+            .GroupBy(x => new
+            {
+                x.LeaveTypeId,
+                Year = x.StartDate.Year
+            })
+            .Select(g => new
+            {
+                g.Key.LeaveTypeId,
+                g.Key.Year,
+
+                UsedDays = g
+                    .Where(x =>
+                        x.Status == LeaveRequestStatus.Approved)
+                    .Sum(x => x.ChargedDays),
+
+                ReservedDays = g
+                    .Where(x =>
+                        x.Status == LeaveRequestStatus.Pending)
+                    .Sum(x => x.ChargedDays)
+            })
+            .ToListAsync();
+
+        return balances.Select(balance =>
+        {
+            var usage = leaveUsage.FirstOrDefault(x =>
+                x.LeaveTypeId == balance.LeaveTypeId &&
+                x.Year == balance.Year);
+
+            var usedDays = usage?.UsedDays ?? 0;
+            var reservedDays = usage?.ReservedDays ?? 0;
+
+            var totalDays =
+                balance.AllocatedDays +
+                balance.CarryForwardDays;
+
+            return new LeaveBalanceDto
+            {
+                Id = balance.Id,
+
+                EmployeeId = balance.EmployeeId,
+                EmployeeName = balance.EmployeeName,
+
+                LeaveTypeId = balance.LeaveTypeId,
+                LeaveTypeName = balance.LeaveTypeName,
+
+                Year = balance.Year,
+
+                AllocatedDays = balance.AllocatedDays,
+                CarryForwardDays = balance.CarryForwardDays,
+
+                TotalDays = totalDays,
+                UsedDays = usedDays,
+                ReservedDays = reservedDays,
+
+                RemainingDays =
+                    totalDays - usedDays,
+
+                AvailableDays =
+                    totalDays - usedDays - reservedDays
+            };
+        }).ToList();
+    }
+
+    public async Task<List<LeaveRequestDto>> GetMyRequestsAsync(
+    string currentUserId)
+    {
+        var employeeId =
+            await _userContextService.GetEmployeeIdAsync(currentUserId);
+
+        if (employeeId is null)
+            throw new UnauthorizedAccessException(
+                "The current user is not linked to an employee.");
+
+        return await _context.LeaveRequests
+            .AsNoTracking()
+            .Where(x => x.EmployeeId == employeeId.Value)
+            .OrderByDescending(x => x.CreatedAt)
+            .Select(x => new LeaveRequestDto
+            {
+                Id = x.Id,
+                LeaveTypeName = x.LeaveType.NameAr,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                ChargedDays = x.ChargedDays,
+                Status = x.Status,
+                Reason = x.Reason
+            })
+            .ToListAsync();
+    }
+    public async Task<List<PendingLeaveApprovalDto>> GetPendingApprovalsAsync(
+    string currentUserId)
+    {
+        var employeeId =
+            await _userContextService.GetEmployeeIdAsync(currentUserId);
+
+        var isHr =
+            await _userContextService.IsInRoleAsync(
+                currentUserId,
+                "HR");
+
+        var isHrManager =
+            await _userContextService.IsInRoleAsync(
+                currentUserId,
+                "HRManager");
+
+        var requests = await _context.LeaveRequests
+            .AsNoTracking()
+            .Where(x => x.Status == LeaveRequestStatus.Pending)
+            .Include(x => x.Employee)
+            .Include(x => x.LeaveType)
+            .Include(x => x.Approvals)
+            .ToListAsync();
+
+        var result = new List<PendingLeaveApprovalDto>();
+
+        foreach (var request in requests)
+        {
+            var currentStep = request.Approvals
+                .Where(x => x.Status == ApprovalStatus.Pending)
+                .OrderBy(x => x.StepOrder)
+                .FirstOrDefault();
+
+            if (currentStep is null)
+                continue;
+
+            var canApprove = currentStep.ApproverType switch
+            {
+                ApproverType.DirectManager =>
+                    employeeId.HasValue &&
+                    request.Employee.ManagerId == employeeId.Value,
+
+                ApproverType.HR =>
+                    isHr,
+
+                ApproverType.HRManager =>
+                    isHrManager,
+
+                _ => false
+            };
+
+            if (!canApprove)
+                continue;
+
+            result.Add(new PendingLeaveApprovalDto
+            {
+                LeaveRequestId = request.Id,
+
+                EmployeeName =
+                    request.Employee.FirstNameEn + " " +
+                    request.Employee.LastNameEn,
+
+                LeaveTypeName =
+                    request.LeaveType.NameAr,
+
+                StartDate = request.StartDate,
+                EndDate = request.EndDate,
+                ChargedDays = request.ChargedDays,
+                Reason = request.Reason,
+
+                StepOrder = currentStep.StepOrder,
+                ApproverType = currentStep.ApproverType
+            });
+        }
+
+        return result
+            .OrderBy(x => x.StartDate)
+            .ToList();
     }
 }

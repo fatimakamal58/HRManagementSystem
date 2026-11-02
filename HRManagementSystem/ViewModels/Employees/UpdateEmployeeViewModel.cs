@@ -8,9 +8,10 @@ namespace HRManagementSystem.Web.ViewModels.Employees
         public UpdateEmployeeDto Employee { get; set; } = new();
 
         public List<SelectListItem> Departments { get; set; } = [];
-
         public List<SelectListItem> JobTitles { get; set; } = [];
         public List<SelectListItem> Users { get; set; } = [];
+        public List<SelectListItem> Managers { get; set; } = [];
+
 
     }
 }

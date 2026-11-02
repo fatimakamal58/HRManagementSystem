@@ -1,0 +1,88 @@
+﻿@model List<WorkWeekSettingDto>
+
+@{
+    ViewData["Title"] = "إعداد أسبوع العمل";
+
+    var dayNames = new Dictionary<DayOfWeek, string>
+    {
+        { DayOfWeek.Sunday, "الأحد" },
+        { DayOfWeek.Monday, "الإثنين" },
+        { DayOfWeek.Tuesday, "الثلاثاء" },
+        { DayOfWeek.Wednesday, "الأربعاء" },
+        { DayOfWeek.Thursday, "الخميس" },
+        { DayOfWeek.Friday, "الجمعة" },
+        { DayOfWeek.Saturday, "السبت" }
+    };
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h3>إعداد أسبوع العمل</h3>
+        <p class="text-muted">
+            حدد أيام العمل الرسمية في المنشأة.
+        </p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-action="WorkWeek" method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <table class="table table-striped align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>اليوم</th>
+                            <th>يوم عمل</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @for (var i = 0; i < Model.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @dayNames[Model[i].DayOfWeek]
+
+                                    <input type="hidden"
+                                           asp-for="@Model[i].DayOfWeek" />
+                                </td>
+
+                                <td>
+                                    <div class="form-check">
+                                        <input asp-for="@Model[i].IsWorkingDay"
+                                               class="form-check-input" />
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit"
+                            class="btn btn-primary">
+                        حفظ إعدادات أسبوع العمل
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
