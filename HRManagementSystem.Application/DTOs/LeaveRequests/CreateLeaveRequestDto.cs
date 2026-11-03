@@ -10,11 +10,11 @@ public class CreateLeaveRequestDto
 
     [Required]
     [DataType(DataType.Date)]
-    public DateTime StartDate { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Today;
 
     [Required]
     [DataType(DataType.Date)]
-    public DateTime EndDate { get; set; }
+    public DateTime EndDate { get; set; } = DateTime.Today;
 
     [StringLength(500)]
     public string? Reason { get; set; }

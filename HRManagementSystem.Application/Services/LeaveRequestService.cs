@@ -33,13 +33,19 @@ public class LeaveRequestService : ILeaveRequestService
         if (employeeId is null)
             throw new UnauthorizedAccessException(
                 "The current user is not linked to an employee.");
-        var employeeExists = await _context.Employees
-            .AsNoTracking()
-            .AnyAsync(x =>
-                x.Id == employeeId.Value &&
-                x.IsActive);
+        var employee = await _context.Employees
+     .AsNoTracking()
+     .Where(x =>
+         x.Id == employeeId.Value &&
+         x.IsActive)
+     .Select(x => new
+     {
+         x.Id,
+         x.ManagerId
+     })
+     .FirstOrDefaultAsync();
 
-        if (!employeeExists)
+        if (employee is null)
         {
             throw new InvalidOperationException(
                 "Employee does not exist or is inactive.");
@@ -59,6 +65,12 @@ public class LeaveRequestService : ILeaveRequestService
 
         var startDate = dto.StartDate.Date;
         var endDate = dto.EndDate.Date;
+
+        if (startDate < DateTime.Today)
+        {
+            throw new InvalidOperationException(
+                "Leave request cannot start in the past.");
+        }
 
         if (endDate < startDate)
         {
@@ -169,11 +181,21 @@ public class LeaveRequestService : ILeaveRequestService
 
         foreach (var step in approvalSteps)
         {
+            var shouldSkip =
+                step.ApproverType == ApproverType.DirectManager &&
+                employee.ManagerId is null;
+
             leaveRequest.Approvals.Add(new LeaveApproval
             {
                 StepOrder = step.StepOrder,
                 ApproverType = step.ApproverType,
-                Status = ApprovalStatus.Pending
+                Status = shouldSkip
+                    ? ApprovalStatus.Skipped
+                    : ApprovalStatus.Pending,
+
+                Comment = shouldSkip
+                    ? "Skipped because the employee has no direct manager."
+                    : null
             });
         }
 
@@ -576,5 +598,57 @@ public class LeaveRequestService : ILeaveRequestService
         return result
             .OrderBy(x => x.StartDate)
             .ToList();
+    }
+
+    public async Task<LeaveRequestDetailsDto?> GetDetailsAsync(
+    int leaveRequestId,
+    string currentUserId)
+    {
+        var employeeId =
+            await _userContextService.GetEmployeeIdAsync(currentUserId);
+
+        if (employeeId is null)
+            throw new UnauthorizedAccessException(
+                "The current user is not linked to an employee.");
+
+        var leaveRequest = await _context.LeaveRequests
+            .AsNoTracking()
+            .Where(x =>
+                x.Id == leaveRequestId &&
+                x.EmployeeId == employeeId.Value)
+            .Select(x => new LeaveRequestDetailsDto
+            {
+                Id = x.Id,
+
+                LeaveTypeName = x.LeaveType.NameAr,
+
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+
+                ChargedDays = x.ChargedDays,
+                Status = x.Status,
+                Reason = x.Reason,
+
+                CurrentApproverType = x.Approvals
+                    .Where(a => a.Status == ApprovalStatus.Pending)
+                    .OrderBy(a => a.StepOrder)
+                    .Select(a => (ApproverType?)a.ApproverType)
+                    .FirstOrDefault(),
+
+                Approvals = x.Approvals
+                    .OrderBy(a => a.StepOrder)
+                    .Select(a => new LeaveApprovalDetailsDto
+                    {
+                        StepOrder = a.StepOrder,
+                        ApproverType = a.ApproverType,
+                        Status = a.Status,
+                        ActionAt = a.ActionAt,
+                        Comment = a.Comment
+                    })
+                    .ToList()
+            })
+            .FirstOrDefaultAsync();
+
+        return leaveRequest;
     }
 }

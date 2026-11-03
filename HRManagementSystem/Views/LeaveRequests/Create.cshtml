@@ -111,7 +111,7 @@
 
                         <input asp-for="Request.StartDate"
                                type="date"
-                               class="form-control" />
+                               class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
 
                         <span asp-validation-for="Request.StartDate"
                               class="text-danger">
@@ -126,7 +126,7 @@
 
                         <input asp-for="Request.EndDate"
                                type="date"
-                               class="form-control" />
+                               class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
 
                         <span asp-validation-for="Request.EndDate"
                               class="text-danger">

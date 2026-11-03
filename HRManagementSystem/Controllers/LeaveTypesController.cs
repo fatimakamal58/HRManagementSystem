@@ -109,4 +109,52 @@ public class LeaveTypesController : Controller
             nameof(Workflow),
             new { id = model.LeaveTypeId });
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeactivateApprovalStep(
+    int id,
+    int leaveTypeId)
+    {
+        try
+        {
+            await _leaveTypeService
+                .DeactivateApprovalStepAsync(id);
+
+            TempData["SuccessMessage"] =
+                "تم تعطيل خطوة الموافقة بنجاح.";
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+
+        return RedirectToAction(
+            nameof(Workflow),
+            new { id = leaveTypeId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ActivateApprovalStep(
+        int id,
+        int leaveTypeId)
+    {
+        try
+        {
+            await _leaveTypeService
+                .ActivateApprovalStepAsync(id);
+
+            TempData["SuccessMessage"] =
+                "تم تفعيل خطوة الموافقة بنجاح.";
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+
+        return RedirectToAction(
+            nameof(Workflow),
+            new { id = leaveTypeId });
+    }
 }

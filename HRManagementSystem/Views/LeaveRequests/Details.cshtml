@@ -1,0 +1,158 @@
+﻿@model LeaveRequestDetailsDto
+
+@{
+    ViewData["Title"] = "تفاصيل طلب الإجازة";
+
+    string GetApproverName(ApproverType type) => type switch
+    {
+        ApproverType.DirectManager => "المدير المباشر",
+        ApproverType.HR => "الموارد البشرية",
+        ApproverType.HRManager => "مدير الموارد البشرية",
+        _ => type.ToString()
+    };
+
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>تفاصيل طلب الإجازة</h2>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            العودة إلى طلباتي
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <strong>نوع الإجازة:</strong>
+                    <div>@Model.LeaveTypeName</div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>الحالة:</strong>
+                    <div>@Model.Status</div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>من:</strong>
+                    <div>@Model.StartDate.ToString("yyyy-MM-dd")</div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>إلى:</strong>
+                    <div>@Model.EndDate.ToString("yyyy-MM-dd")</div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>عدد الأيام:</strong>
+                    <div>@Model.ChargedDays</div>
+                </div>
+
+                @if (Model.Status == LeaveRequestStatus.Pending &&
+                     Model.CurrentApproverType.HasValue)
+                {
+                    <div class="col-md-6">
+                        <strong>الطلب حاليًا لدى:</strong>
+
+                        <div class="text-primary fw-bold">
+                            @GetApproverName(Model.CurrentApproverType.Value)
+                        </div>
+                    </div>
+                }
+
+                <div class="col-12">
+                    <strong>سبب الإجازة:</strong>
+
+                    <div>
+                        @(string.IsNullOrWhiteSpace(Model.Reason)
+                            ? "لا يوجد"
+                            : Model.Reason)
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mb-3">مسار الموافقات</h4>
+
+    @foreach (var approval in Model.Approvals.OrderBy(x => x.StepOrder))
+    {
+        
+    var isCurrentStep =
+        Model.Status == LeaveRequestStatus.Pending &&
+        Model.CurrentApproverType.HasValue &&
+        approval.Status == ApprovalStatus.Pending &&
+        approval.ApproverType == Model.CurrentApproverType.Value;
+
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>
+                            @approval.StepOrder.
+                            @GetApproverName(approval.ApproverType)
+                        </strong>
+                    </div>
+                    <div>
+                        @if (approval.Status == ApprovalStatus.Approved)
+                        {
+                            <span class="badge bg-success">
+                                تمت الموافقة
+                            </span>
+                        }
+                        else if (approval.Status == ApprovalStatus.Rejected)
+                        {
+                            <span class="badge bg-danger">
+                                مرفوض
+                            </span>
+                        }
+                        else if (approval.Status == ApprovalStatus.Skipped)
+                        {
+                            <span class="badge bg-info text-dark">
+                                تم التجاوز
+                            </span>
+                        }
+                        else if (isCurrentStep)
+                        {
+                            <span class="badge bg-warning text-dark">
+                                بانتظار الموافقة
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">
+                                لم يصل الدور بعد
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                @if (approval.ActionAt.HasValue)
+                {
+                    <div class="text-muted mt-2">
+                        تاريخ الإجراء:
+                        @approval.ActionAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(approval.Comment))
+                {
+                    <div class="mt-2">
+                        <strong>التعليق / السبب:</strong>
+                        <div>@approval.Comment</div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    }
+
+</div>

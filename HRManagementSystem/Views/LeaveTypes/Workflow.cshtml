@@ -106,6 +106,8 @@
                         <tr>
                             <th>الترتيب</th>
                             <th>جهة الموافقة</th>
+                            <th>الحالة</th>
+                            <th>الإجراء</th>
                         </tr>
                     </thead>
 
@@ -129,6 +131,69 @@
                                         case ApproverType.HRManager:
                                             <span>مدير الموارد البشرية</span>
                                             break;
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (step.IsActive)
+                                    {
+                                        <span class="badge bg-success">
+                                            مفعّلة
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            معطّلة
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (step.IsActive)
+                                    {
+                                        <form asp-action="DeactivateApprovalStep"
+                                              method="post"
+                                              class="d-inline">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@step.Id" />
+
+                                            <input type="hidden"
+                                                   name="leaveTypeId"
+                                                   value="@Model.LeaveTypeId" />
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('هل أنت متأكد من تعطيل هذه الخطوة؟');">
+                                                تعطيل
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="ActivateApprovalStep"
+                                              method="post"
+                                              class="d-inline">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@step.Id" />
+
+                                            <input type="hidden"
+                                                   name="leaveTypeId"
+                                                   value="@Model.LeaveTypeId" />
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-success">
+                                                تفعيل
+                                            </button>
+                                        </form>
                                     }
                                 </td>
                             </tr>

@@ -9,4 +9,6 @@ public class LeaveApprovalStepDto
     public int StepOrder { get; set; }
 
     public ApproverType ApproverType { get; set; }
+
+    public bool IsActive { get; set; }
 }

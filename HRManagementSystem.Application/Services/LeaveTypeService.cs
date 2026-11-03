@@ -151,15 +151,70 @@ public class LeaveTypeService : ILeaveTypeService
         return await _context.LeaveApprovalSteps
             .AsNoTracking()
             .Where(x =>
-                x.LeaveTypeId == leaveTypeId &&
-                x.IsActive)
+                x.LeaveTypeId == leaveTypeId )
             .OrderBy(x => x.StepOrder)
             .Select(x => new LeaveApprovalStepDto
             {
                 Id = x.Id,
                 StepOrder = x.StepOrder,
-                ApproverType = x.ApproverType
+                ApproverType = x.ApproverType,
+                IsActive = x.IsActive
             })
             .ToListAsync();
+    }
+    public async Task DeactivateApprovalStepAsync(int id)
+    {
+        var step = await _context.LeaveApprovalSteps
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (step is null)
+        {
+            throw new InvalidOperationException(
+                "Approval step was not found.");
+        }
+
+        if (!step.IsActive)
+        {
+            throw new InvalidOperationException(
+                "Approval step is already inactive.");
+        }
+
+        var activeStepsCount = await _context.LeaveApprovalSteps
+            .CountAsync(x =>
+                x.LeaveTypeId == step.LeaveTypeId &&
+                x.IsActive);
+
+        if (activeStepsCount <= 1)
+        {
+            throw new InvalidOperationException(
+                "The last active approval step cannot be deactivated.");
+        }
+
+        step.IsActive = false;
+        step.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+    }
+    public async Task ActivateApprovalStepAsync(int id)
+    {
+        var step = await _context.LeaveApprovalSteps
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (step is null)
+        {
+            throw new InvalidOperationException(
+                "Approval step was not found.");
+        }
+
+        if (step.IsActive)
+        {
+            throw new InvalidOperationException(
+                "Approval step is already active.");
+        }
+
+        step.IsActive = true;
+        step.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
     }
 }

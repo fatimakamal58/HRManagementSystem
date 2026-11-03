@@ -25,5 +25,8 @@ public interface ILeaveRequestService
     string currentUserId);
     Task<List<PendingLeaveApprovalDto>> GetPendingApprovalsAsync(
     string currentUserId);
+    Task<LeaveRequestDetailsDto?> GetDetailsAsync(
+    int leaveRequestId,
+    string currentUserId);
 
 }

@@ -96,13 +96,13 @@
 
             <div class="col-md-4 mb-3">
                 <label asp-for="Employee.BirthDate" class="form-label">تاريخ الميلاد</label>
-                <input asp-for="Employee.BirthDate" class="form-control" />
+            <input asp-for="Employee.BirthDate" class="form-control" min="1950-01-01" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Employee.BirthDate" class="text-danger"></span>
             </div>
 
             <div class="col-md-4 mb-3">
                 <label asp-for="Employee.HireDate" class="form-label">تاريخ التوظيف</label>
-                <input asp-for="Employee.HireDate" class="form-control" />
+            <input asp-for="Employee.HireDate" class="form-control" min="2010-01-01" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Employee.HireDate" class="text-danger"></span>
             </div>
         </div>

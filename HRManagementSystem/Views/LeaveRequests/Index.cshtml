@@ -119,28 +119,38 @@
                                     </td>
 
                                     <td>
-                                        @if (item.Status == LeaveRequestStatus.Pending ||
-                                             (item.Status == LeaveRequestStatus.Approved &&
-                                              item.StartDate.Date > DateTime.Today))
-                                        {
-                                            <form asp-action="Cancel"
-                                                  asp-route-id="@item.Id"
-                                                  method="post"
-                                                  class="d-inline">
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-primary">
+                                                تفاصيل
+                                            </a>
 
-                                                @Html.AntiForgeryToken()
+                                            @if (item.Status == LeaveRequestStatus.Pending ||
+                                                (item.Status == LeaveRequestStatus.Approved &&
+                                                 item.StartDate.Date > DateTime.Today))
+                                            {
+                                                <form asp-action="Cancel"
+                                                      asp-route-id="@item.Id"
+                                                      method="post"
+                                                      class="d-inline">
 
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-outline-danger"
-                                                        onclick="return confirm('هل أنت متأكد من إلغاء طلب الإجازة؟');">
-                                                    إلغاء
-                                                </button>
+                                                    @Html.AntiForgeryToken()
 
-                                            </form>
-                                        }
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            onclick="return confirm('هل أنت متأكد من إلغاء طلب الإجازة؟');">
+                                                        إلغاء
+                                                    </button>
+                                                </form>
+                                            }
+                                       
                                         else
                                         {
-                                            <span class="text-muted">-</span>
+                                            <span class="text-muted"><button type="submit"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            disabled>
+                                                        إلغاء
+                                                    </button></span>
                                         }
                                     </td>
 

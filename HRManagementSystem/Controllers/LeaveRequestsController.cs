@@ -152,16 +152,7 @@ public class LeaveRequestsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task LoadCreateFormAsync(
-        CreateLeaveRequestViewModel model,
-        string currentUserId)
-    {
-        await LoadLeaveTypesAsync(model);
-
-        model.Balances =
-            await _leaveBalanceService
-                .GetMyBalancesAsync(currentUserId);
-    }
+ 
 
     [HttpGet]
     public async Task<IActionResult> Approvals()
@@ -246,7 +237,30 @@ public class LeaveRequestsController : Controller
 
         return RedirectToAction(nameof(Approvals));
     }
+    [HttpGet]
+    public async Task<IActionResult> Details(int id)
+    {
+        var currentUserId = User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
 
+        if (string.IsNullOrWhiteSpace(currentUserId))
+            return Challenge();
+
+        try
+        {
+            var model = await _leaveRequestService
+                .GetDetailsAsync(id, currentUserId);
+
+            if (model is null)
+                return NotFound();
+
+            return View(model);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
 
 
 
@@ -269,5 +283,16 @@ public class LeaveRequestsController : Controller
                 Text = x.NameAr
             })
             .ToList();
+    }
+
+    private async Task LoadCreateFormAsync(
+     CreateLeaveRequestViewModel model,
+     string currentUserId)
+    {
+        await LoadLeaveTypesAsync(model);
+
+        model.Balances =
+            await _leaveBalanceService
+                .GetMyBalancesAsync(currentUserId);
     }
 }

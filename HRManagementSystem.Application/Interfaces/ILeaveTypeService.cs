@@ -10,4 +10,6 @@ public interface ILeaveTypeService
     Task AddApprovalStepAsync(CreateLeaveApprovalStepDto dto);
     Task<List<LeaveApprovalStepDto>> GetApprovalStepsAsync(
     int leaveTypeId);
+    Task DeactivateApprovalStepAsync(int id);
+    Task ActivateApprovalStepAsync(int id);
 }
